@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2015-12-14
+* @Last Modified 2015-12-15
 */
 
 'use strict';
@@ -131,12 +131,8 @@ export default Waterline.Collection.extend({
   
   beforeCreate: function(values, cb) {
     // An example encrypt function defined somewhere
-    hashPassword(values.password, values.salt, function(err, password) {
-      if(err) return cb(err);
-
-      values.password = password;
-      cb();
-    });
+    values.password = hashPassword(values.password, values.salt)
+    cb();
   },
 
   isViewer: function(user) {
