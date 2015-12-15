@@ -1,6 +1,6 @@
 {
   "name": "@nxus/users",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "User management module for Nxus apps.",
   "main": "lib/index.js",
   "scripts": {
