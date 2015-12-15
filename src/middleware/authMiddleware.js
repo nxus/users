@@ -1,13 +1,13 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 12:01:06
-* @Last Modified 2015-12-14 @Last Modified time: 2015-12-14 12:01:06
+* @Last Modified 2015-12-15
 */
 
 'use strict';
 
 import passport from 'passport'
-import {LocalStrategy} from 'passport-local'
+import LocalStrategy from 'passport-local'
 
 module.exports = (plugin, app) => {
   passport.use(
