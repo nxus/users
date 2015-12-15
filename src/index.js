@@ -9,6 +9,7 @@
 
 import UserModel from './models/userModel'
 import TeamModel from './models/teamModel'
+import SessionModel from './models/sessionModel'
 
 //import APIController from './lib/controllers/apiController'
 
@@ -32,9 +33,10 @@ export default class Users {
     this.middleware.ensureAuthenticated = ensureAuthenticated(this, app)
     
     this.tasks.createAdminIfNone = createAdminIfNone(app)
-    
-    app.get('storage').provide('model', UserModel)
-    app.get('storage').provide('model', TeamModel)
+
+    app.get('storage').provide('model', SessionModel);
+    app.get('storage').provide('model', UserModel);
+    app.get('storage').provide('model', TeamModel);
   }
 }
 

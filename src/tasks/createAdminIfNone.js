@@ -16,10 +16,12 @@ const defaultUser = {
 export default (app) => {
   app.on('launch', () => {
     app.get('storage').request('getModel', 'user').then((User) => {
+      console.log("User", User);
       return User.findOne().where({admin: true}).then((user) => {
         if(!user) {
-          return User.create(defaultUser).then(() => {
-            console.log('default user created')
+          console.log("Here", User.adapters, User.connections);
+          return User.create(defaultUser).then((user) => {
+            console.log('default user created:', user.email, "password:", user.password);
           }).catch((e) => {
             console.log('could not create user', e)
           })
