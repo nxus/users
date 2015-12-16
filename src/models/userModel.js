@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2015-12-15
+* @Last Modified 2015-12-16
 */
 
 'use strict';
@@ -133,6 +133,17 @@ export default Waterline.Collection.extend({
     // An example encrypt function defined somewhere
     values.password = hashPassword(values.password, values.salt)
     cb();
+  },
+
+  beforeUpdate: function(values, cb) {
+    // An example encrypt function defined somewhere
+    this
+      .findOne(values.id)
+      .then((usr) => {
+        if(values.password && values.password.length > 0)
+          values.password = hashPassword(values.password, usr.salt)
+        cb();
+      });
   },
 
   isViewer: function(user) {
