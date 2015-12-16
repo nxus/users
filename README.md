@@ -62,11 +62,11 @@ The Users module defines some convience routes for handling basic user functiona
 
 ### /login
 
-** Params **
+**Params**
 Expects to recieve a POSTed form with the values `username`, `password` and `redirect`. `redirect` should be a url to redirect the user to on success.  On login failure, the user will be redirected back to /login.
 
 ### /logout
 
-** Params **
+**Params**
 Expects to recieve a GET request with the param `redirect`, which is a url where the user will be redirected on successful logout.
 
