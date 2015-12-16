@@ -11,6 +11,7 @@ const defaultUser = {
   nameFirst: "Admin",
   nameLast: "User",
   password: "admin",
+  enabled: true,
   admin: true
 }
 
