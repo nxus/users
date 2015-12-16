@@ -41,6 +41,7 @@
     "express-session": "^1.12.1",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
+    "routes": "^2.1.0",
     "session-file-store": "0.0.24",
     "underscore": "^1.7.0"
   },

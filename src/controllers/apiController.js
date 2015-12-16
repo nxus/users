@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2015-12-15
+* @Last Modified 2015-12-16
 */
 
 'use strict';
@@ -16,6 +16,8 @@ export default class APIController {
   constructor(plugin, app) {
     this.app = app;
     var router = app.get('router')
+
+    router.provide('route', 'GET', '/logout', this._logoutHandler.bind(this))
 
     app.on('startup', () => {
       router.request('getExpressApp').then((expressApp) => {
@@ -54,6 +56,16 @@ export default class APIController {
     })
   }
 
+  _logoutHandler(req, res) {
+    this.app.emit('user.loggedOut', req.user)
+    req.session.flash = []
+    req.session.save(err => {
+      this.app.log.debug('logged out', req.user)
+      req.logout()
+      res.redirect('/login')
+    })
+  }
+
   // _authenticationCallback(req, res, next) {
   //   let failureRedirect = '/login'
   //   if (req.param('redirect')) {
@@ -87,16 +99,6 @@ export default class APIController {
   //         })
   //       })
   //     })
-  //   })
-  // }
-
-  // _logoutHandler(req, res) {
-  //   this.app.emit('user.loggedOut', req.user)
-  //   req.session.flash = []
-  //   req.session.save(err => {
-  //     this.app.log.debug('logged out', req.user)
-  //     req.logout()
-  //     res.redirect('/login')
   //   })
   // }
 

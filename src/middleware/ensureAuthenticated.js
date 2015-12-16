@@ -1,12 +1,18 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 12:16:14
-* @Last Modified 2015-12-15
+* @Last Modified 2015-12-16
 */
 
 'use strict';
 
+import _ from 'underscore';
+
+import Router from 'routes';
+
 module.exports = function(plugin, app) {
+  var router = new Router();
+  var noop = () => {};
   app.get('router').provideBefore('middleware', (req, res, next) => {
     // var host = req.get('host')
     // if(!host)
@@ -20,11 +26,21 @@ module.exports = function(plugin, app) {
     // }).then((team) => {
     //   req.teamId = null
     //   if(team) req.teamId = team._id
-    console.log('authenticated', req.isAuthenticated())
-    if (req.path.indexOf("/login") == -1 && 
-          req.path.indexOf("/img") == -1 && 
-          req.path.indexOf("/js") == -1 && 
-          req.path.indexOf("/scripts") == -1 && !req.isAuthenticated()) {
+    //   
+    
+    var protectedRoutes = plugin.protectedRoutes;
+
+    var _checkRoute = (route, protectedRoutes) => {
+      router.routes = [];
+      router.routeMap = [];
+      protectedRoutes.forEach((r) => {
+        router.addRoute(r, noop)
+      }) 
+      var match = router.match(route);
+      return typeof match != 'undefined'
+    }
+
+    if (_checkRoute(req.path, protectedRoutes) && !req.isAuthenticated()) {
       return res.redirect(app.config.loginRoute || '/login?redirect=' + encodeURIComponent(req.originalUrl));
     }
     return next()
