@@ -62,7 +62,10 @@ export default class APIController {
     req.session.save(err => {
       this.app.log.debug('logged out', req.user)
       req.logout()
-      res.redirect('/login')
+      if(req.params.redirect)
+        res.redirect(req.params.redirect)
+      else
+        res.redirect('/login')
     })
   }
 
