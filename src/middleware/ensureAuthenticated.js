@@ -28,7 +28,7 @@ module.exports = function(plugin, app) {
     //   if(team) req.teamId = team._id
     //   
     
-    var protectedRoutes = plugin.protectedRoutes;
+    var protectedRoutes = _.unique(plugin.protectedRoutes);
 
     var _checkRoute = (route, protectedRoutes) => {
       router.routes = [];
