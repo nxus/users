@@ -2,7 +2,7 @@
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
 * @Last Modified 2015-12-15
-* @Last Modified time: 2015-12-15 16:28:01
+* @Last Modified time: 2015-12-15 18:25:23
 */
 
 'use strict';
@@ -25,6 +25,10 @@ export default class Users {
     this.tasks = {}
     this.middleware = {}
 
+    app.get('storage').provide('model', UserModel)
+    app.get('storage').provide('model', TeamModel)
+    app.get('templater').provide('template', 'user-login', 'ejs', __dirname+"/../views/login.ejs")
+
     this.controllers.api = new APIController(this, app)
 
     this.middleware.session = sessionMiddleware(this, app)
@@ -32,10 +36,6 @@ export default class Users {
     this.middleware.ensureAuthenticated = ensureAuthenticated(this, app)
     
     this.tasks.createAdminIfNone = createAdminIfNone(app)
-    
-    app.get('storage').provide('model', UserModel)
-    app.get('storage').provide('model', TeamModel)
-    app.get('templater').provide('template', 'user-login', 'ejs', __dirname+"/../views/login.ejs")
   }
 }
 

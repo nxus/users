@@ -8,20 +8,19 @@
 
 import expressSession from 'express-session';
 import _ from 'underscore';
-var WaterlineStore = require('connect-waterline')(expressSession);
+var FileStore = require('session-file-store')(expressSession);
 
 module.exports = (plugin, app) => {
-  var opts = _.pick(app.config.storage, 'adapters', 'connections')
-  opts.connections['connect-waterline'] = opts.connections.default;
-  app.get('router').before('middleware', expressSession(
+  app.get('router').provideBefore('middleware', expressSession(
     {
       cookie: {
-          maxAge: 1000*60*60*24, // 3 hour session
-          domain: app.config.COOKIE_DOMAIN || 'nxus'
+          maxAge: 1000*60*60*24 // 3 hour session
       },
       secret: app.config.secret || 'nxusapp',
       name: "_nxusid",
-      store: new WaterlineStore(opts)
+      store: new FileStore,
+      resave: true,
+      saveUninitialized: false
     }
   ))
 };

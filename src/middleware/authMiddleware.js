@@ -11,35 +11,28 @@ import LocalStrategy from 'passport-local'
 
 module.exports = (plugin, app) => {
   passport.use(
-    new LocalStrategy(
-      (function() {
-        return function(username, password, done){
-          app.get('storage').request('model', 'user').then((User) => {
-            User.findOne({ email: username })
-              .then((user) => {
-                if(err)                             return done(err);
-                if(!user)                           return done(null, false, { message: 'Incorrect email address.' });
-                if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' });
-                if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' });
-                app.get('users').emit('loggedIn', user)
-                return done(null, user);
-            });
-          })
-        }
-      })()
-    )
+    new LocalStrategy((username, password, done) => {
+      app.get('storage').request('getModel', 'user').then((User) => {
+        User.findOne({ email: username })
+        .then((user) => {
+          if(!user)                           return done(null, false, { message: 'Incorrect email address.' });
+          if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' });
+          if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' });
+          return done(null, user);
+        });
+      });
+    })
   );
 
-  passport.serializeUser(function(user, done){
+  passport.serializeUser((user, done) => {
     done(null, user);
   });
 
-  passport.deserializeUser(function(user, done){
+  passport.deserializeUser((user, done) =>{
     done(null, user);
   });
 
-  app.get('router').before('middleware', passport.initialize());
-  app.get('router').before('middleware', passport.session());
-
+  app.get('router').provideBefore('middleware', passport.initialize());
+  app.get('router').provideBefore('middleware', passport.session());
   return passport;
 };

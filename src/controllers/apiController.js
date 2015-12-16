@@ -14,24 +14,42 @@ const isDev = process.env.NODE_ENV !== 'production';
 
 export default class APIController {
   constructor(plugin, app) {
+    this.app = app;
     var router = app.get('router')
 
-    router.provide('route', 'POST', '/login', (req, res) => {
-      app.get('storage').request('model', 'user').then((User) => {
-        var r = req.param('redirect')
+    app.on('startup', () => {
+      router.request('getExpressApp').then((expressApp) => {
+        expressApp.post(
+          '/login',
+          this._authenticationCallback.bind(this),
+          this._loginHandler.bind(this)
+        )
+      })
+    })
+  }
+
+  _authenticationCallback(req, res, next) {
+    let failureRedirect = '/login'
+    if (req.param.redirect) {
+      failureRedirect += '?redirect=' + encodeURIComponent(req.param('redirect'))
+    }
+    passport.authenticate('local', {failureRedirect: failureRedirect, failureFlash: true})(req, res, next)
+  }
+
+  _loginHandler(req, res) {
+    console.log('login callback')
+    this.app.get('storage').request('model', 'user').then((User) => {
+          
+      req.session.flash = []
+      req.session.save(err => {
+        var r = req.param.redirect
         if (r) {
-          /// default redirect in `login.ejs` is `/`, override for admin users
           if (r === '/' && User.isEditor(req.user)) {
             return res.redirect('/admin')
           }
-            
-          req.session.flash = []
-          req.session.save(err => {
-            return res.redirect(req.param('redirect'))
-          })  
-        } else {
-          res.json({msg: "Successfully Authenticated"})
-        }  
+          return res.redirect(r)
+        } else
+          return res.redirect("/")
       })
     })
   }
