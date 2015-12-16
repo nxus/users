@@ -28,7 +28,7 @@ app.get('storage').request('getModel', 'user').then((User) => {
 });
 ```
 
-** Fields **
+**Fields**
 * email: string
 * password: string
 * nameFirst: string
@@ -40,7 +40,7 @@ app.get('storage').request('getModel', 'user').then((User) => {
 * metadata: JSON
 * team: relation to Team model
 
-** Convenience Methods **
+**Convenience Methods**
 * name(): first + last name
 * isAdmin(): boolean if user is an Admin
 * validPassword(pass): returns true if the password is valid
