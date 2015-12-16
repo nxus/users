@@ -1,44 +1,40 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2015-12-14 @Last Modified time: 2015-12-14 11:57:54
+* @Last Modified 2015-12-15
 */
 
 'use strict';
 
 
 import passport from 'passport'
-import ejs from 'ejs'
 import fs from 'fs'
 
 const isDev = process.env.NODE_ENV !== 'production';
 
 export default class APIController {
-  // constructor(plugin, app) {
-  //   this.app = app
-  //   this.appDomain = isDev ? 'localhost:3000' : 'datadash.io'
+  constructor(plugin, app) {
+    var router = app.get('router')
 
-  //   app.on('app.startup', () => {
-  //     app.emit('router.getExpressApp', (expressApp) => {
-  //       expressApp.post(
-  //         '/api/users/login',
-  //         this._authenticationCallback.bind(this),
-  //         this._loginHandler.bind(this)
-  //       )
-
-  //       expressApp.get('/api/users/:id/reset/:token', this._verifyResetPasswordToken.bind(this))
-  //       expressApp.post('/api/users/reset-password', this._resetPassword.bind(this))
-  //       expressApp.post('/api/users/forgot', this._forgotPassword.bind(this))
-  //     })
-
-  //     app.emit('template.setPage', '/reset-password/:userId', this._renderResetPassword.bind(this))
-  //     app.emit('router.setRoute', '/api/users/:id/verify/:token', this._verifyTokenHandler.bind(this))
-  //     app.emit('router.setRoute', '/api/users/:id/invite', this._resendInvitationHandler.bind(this))
-  //     app.emit('router.setRoute', '/logout', this._logoutHandler.bind(this))
-  //   })
-
-  //   app.on('users.sendInviteEmail', this._sendInviteEmail.bind(this))
-  // }
+    router.provide('route', 'POST', '/login', (req, res) => {
+      app.get('storage').request('model', 'user').then((User) => {
+        var r = req.param('redirect')
+        if (r) {
+          /// default redirect in `login.ejs` is `/`, override for admin users
+          if (r === '/' && User.isEditor(req.user)) {
+            return res.redirect('/admin')
+          }
+            
+          req.session.flash = []
+          req.session.save(err => {
+            return res.redirect(req.param('redirect'))
+          })  
+        } else {
+          res.json({msg: "Successfully Authenticated"})
+        }  
+      })
+    })
+  }
 
   // _authenticationCallback(req, res, next) {
   //   let failureRedirect = '/login'

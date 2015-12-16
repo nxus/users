@@ -2,7 +2,7 @@
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
 * @Last Modified 2015-12-15
-* @Last Modified time: 2015-12-15 14:28:29
+* @Last Modified time: 2015-12-15 16:28:01
 */
 
 'use strict';
@@ -10,7 +10,7 @@
 import UserModel from './models/userModel'
 import TeamModel from './models/teamModel'
 
-//import APIController from './lib/controllers/apiController'
+import APIController from './controllers/apiController'
 
 import authMiddleware from './middleware/authMiddleware'
 import ensureAuthenticated from './middleware/ensureAuthenticated'
@@ -25,7 +25,7 @@ export default class Users {
     this.tasks = {}
     this.middleware = {}
 
-    //this.controllers.api = new APIController(this, app)
+    this.controllers.api = new APIController(this, app)
 
     this.middleware.session = sessionMiddleware(this, app)
     this.middleware.auth = authMiddleware(this, app)

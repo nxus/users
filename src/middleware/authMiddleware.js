@@ -14,9 +14,9 @@ module.exports = (plugin, app) => {
     new LocalStrategy(
       (function() {
         return function(username, password, done){
-          app.emit('storage.getModel', 'User', (err, User) => {
+          app.get('storage').request('model', 'user').then((User) => {
             User.findOne({ email: username })
-              .exec(function(err, user) {
+              .then((user) => {
                 if(err)                             return done(err);
                 if(!user)                           return done(null, false, { message: 'Incorrect email address.' });
                 if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' });
