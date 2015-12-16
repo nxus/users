@@ -10,7 +10,8 @@ const defaultUser = {
   email: "admin@nxus.org",
   nameFirst: "Admin",
   nameLast: "User",
-  password: "admin"
+  password: "admin",
+  admin: true
 }
 
 export default (app) => {
