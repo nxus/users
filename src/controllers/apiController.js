@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2015-12-16
+* @Last Modified 2015-12-31
 */
 
 'use strict';
@@ -40,8 +40,7 @@ export default class APIController {
 
   _loginHandler(req, res) {
     console.log('login callback')
-    this.app.get('storage').request('model', 'user').then((User) => {
-          
+    this.app.get('storage').request('getModel', 'user').then((User) => {
       req.session.flash = []
       req.session.save(err => {
         var r = req.param.redirect
