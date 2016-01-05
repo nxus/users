@@ -28,7 +28,7 @@ app.get('storage').request('getModel', 'user').then((User) => {
 });
 ```
 
-** Fields **
+**Fields**
 * email: string
 * password: string
 * nameFirst: string
@@ -40,7 +40,7 @@ app.get('storage').request('getModel', 'user').then((User) => {
 * metadata: JSON
 * team: relation to Team model
 
-** Convenience Methods **
+**Convenience Methods**
 * name(): first + last name
 * isAdmin(): boolean if user is an Admin
 * validPassword(pass): returns true if the password is valid
@@ -62,11 +62,11 @@ The Users module defines some convience routes for handling basic user functiona
 
 ### /login
 
-** Params **
+**Params**
 Expects to recieve a POSTed form with the values `username`, `password` and `redirect`. `redirect` should be a url to redirect the user to on success.  On login failure, the user will be redirected back to /login.
 
 ### /logout
 
-** Params **
+**Params**
 Expects to recieve a GET request with the param `redirect`, which is a url where the user will be redirected on successful logout.
 
