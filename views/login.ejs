@@ -1,5 +1,15 @@
 <section class="sign-widget">
             <div class="body">
+                <% if(typeof req != 'undefined') { %>
+                <% var messages = req.flash(); console.log('messages', messages); %>
+                <% if (messages.error && messages.error.length > 0) { %>
+                <% messages.error.forEach(function(flash) { %>
+                    <div class="alert alert-danger">
+                        <%= flash %>
+                    </div>
+                <% }) %>
+                <% } %>
+                <% } %>
                 <form method="POST" action="/login" class="no-margin">
                     <fieldset>
                         <div class="form-group">
