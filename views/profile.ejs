@@ -1,0 +1,59 @@
+
+<div class="row">
+                    <div class="col-md-12">
+                        <div class="panel">
+                            <div class="panel-heading">
+                                <div class="panel-title">
+                                    Edit Your Profile
+                                </div>
+                            </div>
+                            <div class="panel-body panel-full">
+                                <form role="form" action="/profile/save" method="POST" class="form-horizontal form-bordered" id="wizardForm">
+                                    <input type="hidden" id="id" name="id" value="<%= user.id %>" />
+                                    <div class="form-body">
+                                        <div class="form-group">
+                                            <label class="col-sm-3 to-right" for="borderedEmail">Email</label>
+                                            <div class="col-sm-7">
+                                                <input type="email" id="borderedEmail" class="form-control" value="<%= user.email %>" placeholder="Enter email" name="email" required >
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 to-right" for="borderedPassword">Password</label>
+                                            <div class="col-sm-7">
+                                                <input type="password" id="borderedPassword" class="form-control" placeholder="Enter password" name="password">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 to-right" for="name">First Name</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" id="name" class="form-control" value="<%= user.nameFirst %>" placeholder="Enter your first name" name="nameFirst" required>
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+                                            <label class="col-sm-3 to-right" for="name">Last Name</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" id="name" class="form-control" value="<%= user.nameLast %>" placeholder="Enter your last name" name="nameLast" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 to-right" for="phone">Phone</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" id="phone" class="form-control" value="<%= user.phone %>" placeholder="Enter phone number" name="phone" required>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="col-sm-offset-3 col-sm-7">
+                                                <button class="btn btn-theme" type="submit">Save Profile</button>        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <script>
+$(function() {
+  $("#wizardForm").validate();
+});
+</script>
