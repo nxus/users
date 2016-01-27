@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-01-26
+* @Last Modified 2016-01-27
 */
 
 'use strict';
@@ -45,15 +45,9 @@ export default class APIController {
       user.admin = false
     if(user.id == "")
       delete user.id
-    console.log('user.password', user.password)
-    console.log('user.password.length', user.password.length)
     if(!user.password || (user.password && user.password.length == 0)) {
-      console.log('deleting password')
       delete user.password
     } else
-      console.log('not deleting password')
-      
-    console.log('user updating', user)
     this.app.get('storage').request('getModel', 'user').then((User) => {
       return User.update(user.id, user)
     }).then(() => {
@@ -64,7 +58,6 @@ export default class APIController {
 
   _forgotHandler(req, res) {
     var email = req.param('email')
-    console.log('email', email)
     this.app.get('storage').request('getModel', 'user').then((User) => {
       return User.findOne({email})
     }).then((user) => {
