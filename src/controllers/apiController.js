@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2015-12-31
+* @Last Modified 2016-01-26
 */
 
 'use strict';
@@ -18,6 +18,10 @@ export default class APIController {
     var router = app.get('router')
 
     router.provide('route', 'GET', '/logout', this._logoutHandler.bind(this))
+    router.provide('route', 'POST', '/forgot', this._forgotHandler.bind(this))
+    router.provide('route', 'GET', '/login-link', this._loginLinkHandler.bind(this))
+    router.provide('route', 'GET', '/profile', this._profileHandler.bind(this))
+    router.provide('route', 'POST', '/profile/save', this._saveProfile.bind(this))
 
     app.on('startup', () => {
       router.request('getExpressApp').then((expressApp) => {
@@ -27,6 +31,65 @@ export default class APIController {
           this._loginHandler.bind(this)
         )
       })
+    })
+  }
+
+  _profileHandler(req, res) {
+    return this.app.get('templater').request('renderPartial', 'user-profile', 'default', {user: req.user, req}).then(res.send.bind(res))
+  }
+
+  _saveProfile(req, res) {
+    var user = req.body
+    user.enabled = true
+    if(!user.admin)
+      user.admin = false
+    if(user.id == "")
+      delete user.id
+    console.log('user.password', user.password)
+    console.log('user.password.length', user.password.length)
+    if(!user.password || (user.password && user.password.length == 0)) {
+      console.log('deleting password')
+      delete user.password
+    } else
+      console.log('not deleting password')
+      
+    console.log('user updating', user)
+    this.app.get('storage').request('getModel', 'user').then((User) => {
+      return User.update(user.id, user)
+    }).then(() => {
+      req.flash('success', 'Your profile has been saved.')
+      req.login(user, () => {res.redirect("/profile")})
+    })
+  }
+
+  _forgotHandler(req, res) {
+    var email = req.param('email')
+    console.log('email', email)
+    this.app.get('storage').request('getModel', 'user').then((User) => {
+      return User.findOne({email})
+    }).then((user) => {
+      if(!user) throw new Error('User not found')
+      var link = this.app.config.host+"/login-link?token="+user.resetPasswordToken
+      return this.app.get('templater').request('render', 'user-forgot-email', {user, email, link})
+    }).then((content) => {
+      return this.app.get('mailer').request('send', email, "noreply@"+this.app.config.host, "Password recovery", content)
+    }).then(() => {
+      req.flash('info', 'An email has been sent to the address you provided.');
+      res.redirect('/login');
+    }).catch(() => {
+      res.redirect('/login');
+    });
+  }
+
+  _loginLinkHandler(req, res) {
+    var resetPasswordToken = req.param('token')
+    this.app.get('storage').request('getModel', 'user').then((User) => {
+      return User.findOne({resetPasswordToken})
+    }).then((user) => {
+      if(!user) throw new Error('No user found')
+      req.login(user, () => {res.redirect('/profile')})
+    }).catch(() => {
+      res.redirect('/login')
     })
   }
 

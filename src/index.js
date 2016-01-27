@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2015-12-16
-* @Last Modified time: 2015-12-16 06:46:59
+* @Last Modified 2016-01-26
+* @Last Modified time: 2016-01-26 14:40:21
 */
 
 'use strict';
@@ -31,7 +31,10 @@ export default class Users {
 
     app.get('storage').provide('model', UserModel)
     app.get('storage').provide('model', TeamModel)
+    
     app.get('templater').provide('template', 'user-login', 'ejs', __dirname+"/../views/login.ejs")
+    app.get('templater').provide('template', 'user-profile', 'ejs', __dirname+"/../views/profile.ejs")
+    app.get('templater').provide('template', 'user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
 
     this.controllers.api = new APIController(this, app)
 

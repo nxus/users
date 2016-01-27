@@ -25,7 +25,8 @@
   },
   "peerDependencies": {
     "@nxus/core": "^2.2.0",
-    "@nxus/storage": "^2.2.0"
+    "@nxus/storage": "^2.2.0",
+    "@nxus/mailer": "^2.0.0"
   },
   "devDependencies": {
     "babel": "^5.6.23",
