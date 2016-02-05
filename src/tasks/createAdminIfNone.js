@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 12:26:40
-* @Last Modified 2016-02-04
+* @Last Modified 2016-02-05
 */
 
 'use strict';
@@ -20,6 +20,8 @@ export default (app) => {
     app.get('storage').request('getModel', 'user').then((User) => {
       if(app.config.host)
         defaultUser.email = "admin@"+app.config.host
+      if(app.config.NODE_ENV == 'test')
+        defaultUser.password = 'test'
       return User.findOne().where({admin: true}).then((user) => {
         if(!user) {
           return User.create(defaultUser).then(() => {
