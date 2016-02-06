@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-01-26
-* @Last Modified time: 2016-01-26 14:40:21
+* @Last Modified 2016-02-05
+* @Last Modified time: 2016-02-05 16:28:11
 */
 
 'use strict';
@@ -37,6 +37,11 @@ export default class Users {
     app.get('templater').provide('template', 'user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
 
     this.controllers.api = new APIController(this, app)
+    try {
+        this.controllers.admin = new (require('./controllers/adminController'))(app)
+    } catch(e) {
+        console.log(e)
+    }
 
     this.middleware.session = sessionMiddleware(this, app)
     this.middleware.auth = authMiddleware(this, app)
