@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2015-12-16
+* @Last Modified 2016-02-08
 */
 
 'use strict';
@@ -49,7 +49,10 @@ export default Waterline.Collection.extend({
   identity: 'user',
   connection: 'default',
   attributes: {
-    email: 'string',
+    email: {
+      type: 'string',
+      unique: true
+    },
     nameFirst: 'string',
     nameLast: 'string',
     position: 'string',
