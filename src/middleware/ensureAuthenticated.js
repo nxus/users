@@ -20,7 +20,7 @@ module.exports = function(plugin, app) {
     // var subdomain = host.match(/^[^\.]+/i)
     // if(subdomain && subdomain[0])
     //   subdomain = subdomain[0]
-    // return app.get('storage').request('getModel', 'team').then((Team) => {
+    // return app.get('storage').getModel('team').then((Team) => {
     //   //console.log('team', Team)
     //   return Team.findOne({name: subdomain})
     // }).then((team) => {

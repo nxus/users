@@ -23,7 +23,7 @@ Uses defines a set of common models you can use to build your application, using
 Accessing the user model:
 
 ```
-app.get('storage').request('getModel', 'user').then((User) => {
+app.get('storage').getModel('user').then((User) => {
   ...
 });
 ```
@@ -52,7 +52,7 @@ Users defines a set of common templates you can use in your app
 A login form preconfigured to work with the login/logout routes. Markup supports basic Bootstrap 3 CSS.
 
 ```
-app.get('templater').request('render', 'users-login').then((content) => {
+app.get('templater').render('users-login').then((content) => {
   ...
 }
 ```

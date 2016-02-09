@@ -12,7 +12,7 @@ import LocalStrategy from 'passport-local'
 module.exports = (plugin, app) => {
   passport.use(
     new LocalStrategy((username, password, done) => {
-      app.get('storage').request('getModel', 'user').then((User) => {
+      app.get('storage').getModel('user').then((User) => {
         User.findOne({ email: username })
         .then((user) => {
           if(!user)                           return done(null, false, { message: 'Incorrect email address.' });

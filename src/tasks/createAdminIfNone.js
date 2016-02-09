@@ -17,7 +17,7 @@ const defaultUser = {
 
 export default (app) => {
   app.on('launch', () => {
-    app.get('storage').request('getModel', 'user').then((User) => {
+    app.get('storage').getModel('user').then((User) => {
       if(app.config.host)
         defaultUser.email = "admin@"+app.config.host
       if(app.config.NODE_ENV == 'test')
