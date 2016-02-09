@@ -1,6 +1,6 @@
 {
   "name": "@nxus/users",
-  "version": "2.2.6",
+  "version": "2.3.0",
   "description": "User management module for Nxus apps.",
   "main": "lib/index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "url": "https://github.com/nxus/users/issues"
   },
   "peerDependencies": {
-    "@nxus/core": "^2.2.0",
+    "@nxus/core": "^2.3.0",
     "@nxus/storage": "^2.2.0",
     "@nxus/mailer": "^2.0.0",
     "@nxus/admin-ui": "^2.0.0"

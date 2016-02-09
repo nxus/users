@@ -27,14 +27,14 @@ export default class Users {
 
     this.protectedRoutes = []
 
-    app.get('users').gather('protectedRoute', this._saveProtectedRoute.bind(this))
+    app.get('users').use(this).gather('protectedRoute')
 
-    app.get('storage').provide('model', UserModel)
-    app.get('storage').provide('model', TeamModel)
+    app.get('storage').model(UserModel)
+    app.get('storage').model(TeamModel)
     
-    app.get('templater').provide('template', 'user-login', 'ejs', __dirname+"/../views/login.ejs")
-    app.get('templater').provide('template', 'user-profile', 'ejs', __dirname+"/../views/profile.ejs")
-    app.get('templater').provide('template', 'user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
+    app.get('templater').template('user-login', 'ejs', __dirname+"/../views/login.ejs")
+    app.get('templater').template('user-profile', 'ejs', __dirname+"/../views/profile.ejs")
+    app.get('templater').template('user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
 
     this.controllers.api = new APIController(this, app)
     try {
@@ -50,7 +50,7 @@ export default class Users {
     this.tasks.createAdminIfNone = createAdminIfNone(app)
   }
 
-  _saveProtectedRoute(route) {
+  protectedRoute(route) {
     this.protectedRoutes.push(route);
   }
 }
