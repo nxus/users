@@ -12,10 +12,11 @@ describe("Users", () => {
     app = new TestApp();
   });
   
-  describe("Load", () => {
+  describe("Load", function() {
     it("should not be null", () => Users.should.not.be.null)
 
-    it("should be instantiated", () => {
+    it("should be instantiated", function() {
+      this.timeout(5000)
       module = new Users(app);
       module.should.not.be.null;
     });
@@ -38,13 +39,13 @@ describe("Users", () => {
       app.get('templater').provide.calledWith('template', 'user-forgot-email').should.be.true
     });
     it("should provide routes", () => {
-      app.get('router').provide.calledWith('setRoute', 'GET', '/logout').should.be.true
-      app.get('router').provide.calledWith('setRoute', 'GET', '/forgot').should.be.true
-      app.get('router').provide.calledWith('setRoute', 'POST', '/forgot').should.be.true
-      app.get('router').provide.calledWith('setRoute', 'GET', '/login-link').should.be.true
-      app.get('router').provide.calledWith('setRoute', 'GET', '/profile').should.be.true
-      app.get('router').provide.calledWith('setRoute', 'GET', '/login').should.be.true
-      app.get('router').provide.calledWith('setRoute', 'POST', '/profile/save').should.be.true
+      app.get('router').provide.calledWith('route', 'GET', '/logout').should.be.true
+      app.get('router').provide.calledWith('route', 'GET', '/forgot').should.be.true
+      app.get('router').provide.calledWith('route', 'POST', '/forgot').should.be.true
+      app.get('router').provide.calledWith('route', 'GET', '/login-link').should.be.true
+      app.get('router').provide.calledWith('route', 'GET', '/profile').should.be.true
+      app.get('router').provide.calledWith('route', 'GET', '/login').should.be.true
+      app.get('router').provide.calledWith('route', 'POST', '/profile/save').should.be.true
     });
   });
 });

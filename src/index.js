@@ -36,7 +36,8 @@ export default class Users {
     app.get('templater').template('user-profile', 'ejs', __dirname+"/../views/profile.ejs")
     app.get('templater').template('user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
 
-    this.controllers.api = new APIController(this, app)
+    this.controllers.api = new APIController(app)
+
     try {
         this.controllers.admin = new (require('./controllers/adminController'))(app)
     } catch(e) {

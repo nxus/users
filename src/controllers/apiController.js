@@ -13,17 +13,17 @@ import fs from 'fs'
 const isDev = process.env.NODE_ENV !== 'production';
 
 export default class APIController {
-  constructor(plugin, app) {
+  constructor(app) {
     this.app = app;
     var router = app.get('router')
-
-    router.setRoute('GET', '/logout', this._logoutHandler.bind(this))
-    router.setRoute('POST', '/forgot', this._forgotSaveHandler.bind(this))
-    router.setRoute('GET', '/login-link', this._loginLinkHandler.bind(this))
-    router.setRoute('GET', '/profile', this._profileHandler.bind(this))
-    router.setRoute('GET', '/login', this._loginPageHandler.bind(this))
-    router.setRoute('GET', '/forgot', this._forgotHandler.bind(this))
-    router.setRoute('POST', '/profile/save', this._saveProfile.bind(this))
+    console.log("here", router)
+    router.route('GET', '/logout', this._logoutHandler.bind(this))
+    router.route('POST', '/forgot', this._forgotSaveHandler.bind(this))
+    router.route('GET', '/login-link', this._loginLinkHandler.bind(this))
+    router.route('GET', '/profile', this._profileHandler.bind(this))
+    router.route('GET', '/login', this._loginPageHandler.bind(this))
+    router.route('GET', '/forgot', this._forgotHandler.bind(this))
+    router.route('POST', '/profile/save', this._saveProfile.bind(this))
 
     app.on('startup', () => {
       router.getExpressApp().then((expressApp) => {
