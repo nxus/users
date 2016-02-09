@@ -18,7 +18,7 @@ export default class APIController {
     var router = app.get('router')
 
     router.setRoute('GET', '/logout', this._logoutHandler.bind(this))
-    router.setRoute'POST', '/forgot', this._forgotSaveHandler.bind(this))
+    router.setRoute('POST', '/forgot', this._forgotSaveHandler.bind(this))
     router.setRoute('GET', '/login-link', this._loginLinkHandler.bind(this))
     router.setRoute('GET', '/profile', this._profileHandler.bind(this))
     router.setRoute('GET', '/login', this._loginPageHandler.bind(this))
