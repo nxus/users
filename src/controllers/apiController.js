@@ -16,7 +16,7 @@ export default class APIController {
   constructor(app) {
     this.app = app;
     var router = app.get('router')
-    console.log("here", router)
+
     router.route('GET', '/logout', this._logoutHandler.bind(this))
     router.route('POST', '/forgot', this._forgotSaveHandler.bind(this))
     router.route('GET', '/login-link', this._loginLinkHandler.bind(this))
