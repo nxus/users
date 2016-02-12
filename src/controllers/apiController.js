@@ -13,20 +13,20 @@ import fs from 'fs'
 const isDev = process.env.NODE_ENV !== 'production';
 
 export default class APIController {
-  constructor(plugin, app) {
+  constructor(app) {
     this.app = app;
     var router = app.get('router')
 
-    router.provide('route', 'GET', '/logout', this._logoutHandler.bind(this))
-    router.provide('route', 'POST', '/forgot', this._forgotSaveHandler.bind(this))
-    router.provide('route', 'GET', '/login-link', this._loginLinkHandler.bind(this))
-    router.provide('route', 'GET', '/profile', this._profileHandler.bind(this))
-    router.provide('route', 'GET', '/login', this._loginPageHandler.bind(this))
-    router.provide('route', 'GET', '/forgot', this._forgotHandler.bind(this))
-    router.provide('route', 'POST', '/profile/save', this._saveProfile.bind(this))
+    router.route('GET', '/logout', this._logoutHandler.bind(this))
+    router.route('POST', '/forgot', this._forgotSaveHandler.bind(this))
+    router.route('GET', '/login-link', this._loginLinkHandler.bind(this))
+    router.route('GET', '/profile', this._profileHandler.bind(this))
+    router.route('GET', '/login', this._loginPageHandler.bind(this))
+    router.route('GET', '/forgot', this._forgotHandler.bind(this))
+    router.route('POST', '/profile/save', this._saveProfile.bind(this))
 
     app.on('startup', () => {
-      router.request('getExpressApp').then((expressApp) => {
+      router.getExpressApp().then((expressApp) => {
         expressApp.post(
           '/login',
           this._authenticationCallback.bind(this),
@@ -37,15 +37,15 @@ export default class APIController {
   }
 
   _loginPageHandler(req, res) {
-    return this.app.get('templater').request('renderPartial', 'user-login', 'default', {req, user: req.user}).then(res.send.bind(res))
+    return this.app.get('templater').renderPartial('user-login', 'default', {req, user: req.user}).then(res.send.bind(res))
   }
 
   _forgotHandler(req, res) {
-    return this.app.get('templater').request('renderPartial', 'user-forgot-password', 'default', {req, user: req.user}).then(res.send.bind(res))
+    return this.app.get('templater').renderPartial('user-forgot-password', 'default', {req, user: req.user}).then(res.send.bind(res))
   }
 
   _profileHandler(req, res) {
-    return this.app.get('templater').request('renderPartial', 'user-profile', 'page', {title: 'Your Profile', user: req.user, req}).then(res.send.bind(res))
+    return this.app.get('templater').renderPartial('user-profile', 'page', {title: 'Your Profile', user: req.user, req}).then(res.send.bind(res))
   }
 
   _saveProfile(req, res) {
@@ -58,7 +58,7 @@ export default class APIController {
     if(!user.password || (user.password && user.password.length == 0)) {
       delete user.password
     } else
-    this.app.get('storage').request('getModel', 'user').then((User) => {
+    this.app.get('storage').getModel('user').then((User) => {
       return User.update(user.id, user)
     }).then(() => {
       req.flash('success', 'Your profile has been saved.')
@@ -68,15 +68,15 @@ export default class APIController {
 
   _forgotSaveHandler(req, res) {
     var email = req.param('email')
-    this.app.get('storage').request('getModel', 'user').then((User) => {
+    this.app.get('storage').getModel('user').then((User) => {
       return User.findOne({email})
     }).then((user) => {
       if(!user) throw new Error('User not found')
       var link = this.app.config.host+"/login-link?token="+user.resetPasswordToken
-      return this.app.get('templater').request('render', 'user-forgot-email', {user, email, link})
+      return this.app.get('templater').render('user-forgot-email', {user, email, link})
     }).then((content) => {
       let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+this.app.config.host
-      return this.app.get('mailer').request('send', email, fromEmail, "Password recovery", content)
+      return this.app.get('mailer').send(email, fromEmail, "Password recovery", content)
     }).then(() => {
       req.flash('info', 'An email has been sent to the address you provided.');
       res.redirect('/login');
@@ -87,7 +87,7 @@ export default class APIController {
 
   _loginLinkHandler(req, res) {
     var resetPasswordToken = req.param('token')
-    this.app.get('storage').request('getModel', 'user').then((User) => {
+    this.app.get('storage').getModel('user').then((User) => {
       return User.findOne({resetPasswordToken})
     }).then((user) => {
       if(!user) throw new Error('No user found')
@@ -108,7 +108,7 @@ export default class APIController {
 
   _loginHandler(req, res) {
     console.log('login callback')
-    this.app.get('storage').request('getModel', 'user').then((User) => {
+    this.app.get('storage').getModel('user').then((User) => {
       req.session.flash = []
       req.session.save(err => {
         var r = req.param.redirect
