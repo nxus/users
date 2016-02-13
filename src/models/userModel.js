@@ -1,12 +1,12 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-02-08
+* @Last Modified 2016-02-13
 */
 
 'use strict';
 
-import {Waterline} from '@nxus/storage'
+import {BaseModel} from '@nxus/storage'
 import { Crypto } from 'cryptojs'
 import crypto from 'crypto'
 import _ from 'underscore'
@@ -45,7 +45,7 @@ const Roles = {
   Admin: 1000
 }
 
-export default Waterline.Collection.extend({
+export default BaseModel.extend({
   identity: 'user',
   connection: 'default',
   attributes: {

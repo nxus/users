@@ -1,14 +1,14 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:54:06
-* @Last Modified 2015-12-14
+* @Last Modified 2016-02-13
 */
 
 'use strict';
 
-import {Waterline} from '@nxus/storage'
+import {BaseModel} from '@nxus/storage'
 
-module.exports = Waterline.Collection.extend({
+module.exports = BaseModel.extend({
   identity: 'team',
   connection: 'default',
   attributes: {

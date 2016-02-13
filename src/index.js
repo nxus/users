@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-02-05
-* @Last Modified time: 2016-02-05 16:28:11
+* @Last Modified 2016-02-12
+* @Last Modified time: 2016-02-12 15:42:20
 */
 
 'use strict';
@@ -18,6 +18,10 @@ import sessionMiddleware from './middleware/sessionMiddleware'
 
 import createAdminIfNone from './tasks/createAdminIfNone'
 
+/**
+ * The Users Module provides a complete user authentication and authorization system.
+ * 
+ */
 export default class Users {
   constructor(app) {
     this.app = app
