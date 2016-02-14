@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-02-12
-* @Last Modified time: 2016-02-12 15:42:20
+* @Last Modified 2016-02-14
+* @Last Modified time: 2016-02-14 09:22:58
 */
 
 'use strict';
@@ -35,6 +35,8 @@ export default class Users {
 
     app.get('storage').model(UserModel)
     app.get('storage').model(TeamModel)
+
+    app.get('metrics').capture('user')
     
     app.get('templater').template('user-login', 'ejs', __dirname+"/../views/login.ejs")
     app.get('templater').template('user-profile', 'ejs', __dirname+"/../views/profile.ejs")
