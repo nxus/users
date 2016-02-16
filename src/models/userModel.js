@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-02-13
+* @Last Modified 2016-02-15
 */
 
 'use strict';
@@ -51,10 +51,17 @@ export default BaseModel.extend({
   attributes: {
     email: {
       type: 'string',
-      unique: true
+      unique: true,
+      editType: 'email'
     },
-    nameFirst: 'string',
-    nameLast: 'string',
+    nameFirst: {
+      type: 'string',
+      label: 'First Name'
+    },
+    nameLast: {
+      type: 'string',
+      label: 'Last Name'
+    },
     position: 'string',
     enabled: 'boolean',
     salt: { 
