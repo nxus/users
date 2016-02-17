@@ -1,5 +1,7 @@
 # Nxus Users
 
+[![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
+
 User management module for Nxus apps.  Users provides a complete framework for managing users, authenticating routes and sessions.
 
 ## Install
