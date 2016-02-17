@@ -72,3 +72,9 @@ Expects to recieve a POSTed form with the values `username`, `password` and `red
 Expects to recieve a GET request with the param `redirect`, which is a url where the user will be redirected on successful logout.
 
 ## API
+
+### Users
+
+[src/index.js:25-61](https://github.com/nxus/users/blob/6feb67e4adee45064dffe1e46dd7aa3e43711ccd/src/index.js#L25-L61 "Source code on GitHub")
+
+The Users Module provides a complete user authentication and authorization system.
