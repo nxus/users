@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-02-04
+* @Last Modified 2016-02-19
 */
 
 'use strict';
@@ -37,7 +37,7 @@ export default class APIController {
   }
 
   _loginPageHandler(req, res) {
-    return this.app.get('templater').renderPartial('user-login', 'default', {req, user: req.user}).then(res.send.bind(res))
+    return this.app.get('templater').renderPartial('user-login', 'default', {req, user: req.user, redirect: req.param('redirect')}).then(res.send.bind(res))
   }
 
   _forgotHandler(req, res) {
@@ -111,7 +111,7 @@ export default class APIController {
     this.app.get('storage').getModel('user').then((User) => {
       req.session.flash = []
       req.session.save(err => {
-        var r = req.param.redirect
+        var r = req.param('redirect')
         if (r) {
           return res.redirect(r)
         } else
