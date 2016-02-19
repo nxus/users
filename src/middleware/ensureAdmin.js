@@ -27,7 +27,6 @@ module.exports = function(plugin, app) {
     }
     //console.log('protected route', _checkRoute(req.path, protectedRoutes))
     if (_checkRoute(req.path, protectedRoutes)) {
-      console.log('checking admin', req.user)
       if (!req.isAuthenticated()) return res.redirect(app.config.loginRoute || '/login?redirect=' + encodeURIComponent(req.originalUrl));
       if (!req.user.admin) return res.send(403); 
       else return next();
