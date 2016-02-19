@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-02-17
+* @Last Modified 2016-02-18
 */
 
 'use strict';
@@ -54,12 +54,10 @@ export default BaseModel.extend({
       unique: true
     },
     nameFirst: {
-      type: 'string',
-      label: 'First Name'
+      type: 'string'
     },
     nameLast: {
-      type: 'string',
-      label: 'Last Name'
+      type: 'string'
     },
     position: 'string',
     enabled: 'boolean',
