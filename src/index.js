@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-02-16
-* @Last Modified time: 2016-02-16 09:31:42
+* @Last Modified 2016-02-19
+* @Last Modified time: 2016-02-19 07:58:12
 */
 
 'use strict';
@@ -14,6 +14,7 @@ import APIController from './controllers/apiController'
 
 import authMiddleware from './middleware/authMiddleware'
 import ensureAuthenticated from './middleware/ensureAuthenticated'
+import ensureAdmin from './middleware/ensureAdmin'
 import sessionMiddleware from './middleware/sessionMiddleware'
 
 import createAdminIfNone from './tasks/createAdminIfNone'
@@ -30,8 +31,9 @@ export default class Users {
     this.middleware = {}
 
     this.protectedRoutes = []
+    this.adminRoutes = []
 
-    app.get('users').use(this).gather('protectedRoute')
+    app.get('users').use(this).gather('protectedRoute').gather('ensureAdmin')
 
     app.get('storage').model(UserModel)
     app.get('storage').model(TeamModel)
@@ -51,12 +53,17 @@ export default class Users {
     this.middleware.session = sessionMiddleware(this, app)
     this.middleware.auth = authMiddleware(this, app)
     this.middleware.ensureAuthenticated = ensureAuthenticated(this, app)
+    this.middleware.ensureAdmin = ensureAdmin(this, app)
     
     this.tasks.createAdminIfNone = createAdminIfNone(app)
   }
 
   protectedRoute(route) {
     this.protectedRoutes.push(route);
+  }
+
+  ensureAdmin(route) {
+    this.adminRoutes.push(route);
   }
 }
 
