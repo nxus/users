@@ -77,6 +77,6 @@ Expects to recieve a GET request with the param `redirect`, which is a url where
 
 ### Users
 
-[src/index.js:26-68](https://github.com/nxus/users/blob/63c1647fa9c6214f5307468b240681847233ac0f/src/index.js#L26-L68 "Source code on GitHub")
+[src/index.js:26-69](https://github.com/nxus/users/blob/bb5a85f0b766ce88f26e16747bf3d72d26435f59/src/index.js#L26-L69 "Source code on GitHub")
 
 The Users Module provides a complete user authentication and authorization system.
