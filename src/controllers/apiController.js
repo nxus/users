@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-02-19
+* @Last Modified 2016-02-20
 */
 
 'use strict';
@@ -72,10 +72,10 @@ export default class APIController {
       return User.findOne({email})
     }).then((user) => {
       if(!user) throw new Error('User not found')
-      var link = this.app.config.host+"/login-link?token="+user.resetPasswordToken
+      var link = this.app.config.baseUrl+"/login-link?token="+user.resetPasswordToken
       return this.app.get('templater').render('user-forgot-email', {user, email, link})
     }).then((content) => {
-      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+this.app.config.host
+      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+this.app.config.mailer.emailDomain
       return this.app.get('mailer').send(email, fromEmail, "Password recovery", content)
     }).then(() => {
       req.flash('info', 'An email has been sent to the address you provided.');
