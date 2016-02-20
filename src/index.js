@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-02-19
-* @Last Modified time: 2016-02-19 07:58:12
+* @Last Modified 2016-02-20
+* @Last Modified time: 2016-02-20 11:45:14
 */
 
 'use strict';
@@ -43,6 +43,7 @@ export default class Users {
     app.get('templater').template('user-login', 'ejs', __dirname+"/../views/login.ejs")
     app.get('templater').template('user-profile', 'ejs', __dirname+"/../views/profile.ejs")
     app.get('templater').template('user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
+    app.get('templater').template('user-forgot-password', 'ejs', __dirname+"/../views/forgot-password.ejs")
 
     app.get('admin-ui').adminModel(__dirname+'/controllers/adminController.js')
 
