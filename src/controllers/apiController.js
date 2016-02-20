@@ -75,7 +75,7 @@ export default class APIController {
       var link = this.app.config.baseUrl+"/login-link?token="+user.resetPasswordToken
       return this.app.get('templater').render('user-forgot-email', {user, email, link})
     }).then((content) => {
-      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+this.app.config.mailer.emailDomain
+      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.baseUrl) 
       return this.app.get('mailer').send(email, fromEmail, "Password recovery", content)
     }).then(() => {
       req.flash('info', 'An email has been sent to the address you provided.');
