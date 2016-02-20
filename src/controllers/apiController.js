@@ -73,7 +73,7 @@ export default class APIController {
     }).then((user) => {
       if(!user) throw new Error('No user matching that email was found.')
       var link = "http://"+this.app.config.baseUrl+"/login-link?token="+user.resetPasswordToken
-      return this.app.get('templater').render('user-forgot-email', {user, email, link})
+      return this.app.get('templater').render('user-forgot-email', {user, email, link, siteName: this.app.config.siteName})
     }).then((content) => {
       let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.baseUrl) 
       return this.app.get('mailer').send(email, fromEmail, "Password recovery", content)
