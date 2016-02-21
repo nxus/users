@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-02-20
+* @Last Modified 2016-02-21
 */
 
 'use strict';
@@ -138,7 +138,7 @@ export default BaseModel.extend({
   
   beforeCreate: function(values, cb) {
     // An example encrypt function defined somewhere
-    values.tempPassword = values.password
+    if(values.password && values.password == "") delete values.password
     values.password = hashPassword(values.password, values.salt)
     cb();
   },
@@ -150,6 +150,7 @@ export default BaseModel.extend({
       .then((usr) => {
         if(values.password && values.password.length > 0)
           values.password = hashPassword(values.password, usr.salt)
+        else delete values.password
         cb();
       });
   },

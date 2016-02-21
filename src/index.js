@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-02-20
-* @Last Modified time: 2016-02-20 16:11:02
+* @Last Modified 2016-02-21
+* @Last Modified time: 2016-02-21 14:03:33
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -142,7 +142,9 @@ export default class Users {
   _sendWelcomeEmail(user) {
     this.app.log.debug('Sending welcome email to', user.email)
     var link = "http://"+this.app.config.baseUrl+"/login"
-    this.app.get('templater').render('user-welcome-email', {user, link, siteName: this.app.config.siteName}).then((content) => {
+    let tempPass = user.tempPassword
+    delete user.tempPassword
+    this.app.get('templater').render('user-welcome-email', {user, tempPass, link, siteName: this.app.config.siteName}).then((content) => {
       let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.baseUrl) 
       return this.app.get('mailer').send(user.email, fromEmail, "Welcome to "+this.app.config.siteName, content)
     })
