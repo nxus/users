@@ -1,14 +1,16 @@
-# Nxus Users
+# @nxus/users
+
+## 
 
 [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
 
 User management module for Nxus apps.  Users provides a complete framework for managing users, authenticating routes and sessions.
 
-## Install
+### Install
 
     > npm install @nxus/users --save
 
-## Quickstart
+### Quickstart
 
 Once Users is installed in your app, you are ready to go.  It includes the following components:
 
@@ -16,11 +18,11 @@ Once Users is installed in your app, you are ready to go.  It includes the follo
 -   login/logout routes
 -   authentication/session middleware
 
-## Models
+### Models
 
 Uses defines a set of common models you can use to build your application, using the @nxus/storage module (which uses Waterline to provide common ORM functionality).
 
-### User
+#### User
 
 Accessing the user model:
 
@@ -47,11 +49,11 @@ Accessing the user model:
 -   isAdmin(): boolean if user is an Admin
 -   validPassword(pass): returns true if the password is valid
 
-## Templates
+### Templates
 
 Users defines a set of common templates you can use in your app
 
-### login
+#### login
 
 A login form preconfigured to work with the login/logout routes. Markup supports basic Bootstrap 3 CSS.
 
@@ -59,24 +61,24 @@ A login form preconfigured to work with the login/logout routes. Markup supports
       ...
     }
 
-## Routes
+### Routes
 
 The Users module defines some convience routes for handling basic user functionality.
 
-### /login
+#### /login
 
 **Params**
 Expects to recieve a POSTed form with the values `username`, `password` and `redirect`. `redirect` should be a url to redirect the user to on success.  On login failure, the user will be redirected back to /login.
 
-### /logout
+#### /logout
 
 **Params**
 Expects to recieve a GET request with the param `redirect`, which is a url where the user will be redirected on successful logout.
 
 ## API
 
-### Users
+* * *
 
-[src/index.js:26-81](https://github.com/nxus/users/blob/6cd087b3a4421145e2818f8fc19b0ae2e1485054/src/index.js#L26-L81 "Source code on GitHub")
+## Users
 
 The Users Module provides a complete user authentication and authorization system.
