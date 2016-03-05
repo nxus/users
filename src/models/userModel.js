@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-02-21
+* @Last Modified 2016-03-05
 */
 
 'use strict';
@@ -62,17 +62,14 @@ export default BaseModel.extend({
     position: 'string',
     enabled: 'boolean',
     salt: { 
-      type: 'string', 
-      defaultsTo: randomSalt
+      type: 'string'
     },
-    passwordHash: 'string',
+    password: 'string',
     verifyToken: { 
-      type: 'string', 
-      defaultsTo: generateToken
+      type: 'string'
     },
     resetPasswordToken: { 
-      type: 'string', 
-      defaultsTo: generateToken 
+      type: 'string'
     },
     resetPasswordExpires: 'datetime',
     verified: { 
@@ -134,6 +131,13 @@ export default BaseModel.extend({
     isViewer: function() {
       return this.role == Roles.Viewer
     }
+  },
+
+  beforeValidate: function(values, cb) {
+    if(!values.salt || values.salt == "") values.salt = randomSalt()
+    if(!values.verifyToken || values.verifyToken == "") values.verifyToken = generateToken()
+    if(!values.resetPasswordToken || values.resetPasswordToken == "") values.resetPasswordToken = generateToken()
+    cb();
   },
   
   beforeCreate: function(values, cb) {

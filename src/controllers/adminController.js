@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2016-02-05 10:09:46
-* @Last Modified 2016-02-16
+* @Last Modified 2016-03-05
 */
 
 'use strict';
@@ -22,7 +22,7 @@ export default class AdminController extends AdminBase {
       'updatedAt', 
       'position', 
       'salt', 
-      'passwordHash', 
+      'password', 
       'verifyToken', 
       'resetPasswordToken', 
       'resetPasswordExpires', 
