@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-03-05
+* @Last Modified 2016-04-10
 */
 
 'use strict';
@@ -153,7 +153,7 @@ export default BaseModel.extend({
       .findOne(values.id)
       .then((usr) => {
         if(values.password && values.password.length > 0)
-          values.password = hashPassword(values.password, usr.salt)
+          values.password = hashPassword(values.password, values.salt)
         else delete values.password
         cb();
       });

@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-02-20
+* @Last Modified 2016-04-10
 */
 
 'use strict';
@@ -51,20 +51,18 @@ export default class APIController {
   _saveProfile(req, res) {
     var user = req.body
     user.enabled = true
-    if(!user.admin)
-      user.admin = false
     if(user.id == "")
       delete user.id
     if(!user.password || (user.password && user.password.length == 0)) {
       delete user.password
-    } else
+    } 
     this.app.get('storage').getModel('user').then((User) => {
       return User.update(user.id, user)
     }).then(() => {
       req.flash('success', 'Your profile has been saved.')
       req.login(user, () => {res.redirect("/profile")})
     })
-  }
+    }
 
   _forgotSaveHandler(req, res) {
     var email = req.param('email')
@@ -99,7 +97,6 @@ export default class APIController {
   }
 
   _authenticationCallback(req, res, next) {
-    console.log('authenticating')
     let failureRedirect = '/login'
     if (req.param.redirect) {
       failureRedirect += '?redirect=' + encodeURIComponent(req.param('redirect'))
@@ -108,7 +105,6 @@ export default class APIController {
   }
 
   _loginHandler(req, res) {
-    console.log('login callback')
     this.app.get('storage').getModel('user').then((User) => {
       req.session.flash = []
       req.session.save(err => {
