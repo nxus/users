@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-02-21
-* @Last Modified time: 2016-02-21 14:03:33
+* @Last Modified 2016-04-12
+* @Last Modified time: 2016-04-12 08:56:04
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -139,7 +139,7 @@ export default class Users {
     app.get('storage').on('model.create.user', this._sendWelcomeEmail.bind(this))
   }
 
-  _sendWelcomeEmail(user) {
+  _sendWelcomeEmail(model, user) {
     this.app.log.debug('Sending welcome email to', user.email)
     var link = "http://"+this.app.config.baseUrl+"/login"
     let tempPass = user.tempPassword
