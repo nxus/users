@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-04-12
-* @Last Modified time: 2016-04-12 09:46:39
+* @Last Modified 2016-04-14
+* @Last Modified time: 2016-04-14 17:13:46
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -117,15 +117,15 @@ export default class Users {
 
     app.get('metrics').capture('user')
     
-    app.get('templater').template('user-login', 'ejs', __dirname+"/../views/login.ejs")
-    app.get('templater').template('user-profile', 'ejs', __dirname+"/../views/profile.ejs")
-    app.get('templater').template('user-forgot-email', 'ejs', __dirname+"/../views/forgot-email.ejs")
-    app.get('templater').template('user-forgot-password', 'ejs', __dirname+"/../views/forgot-password.ejs")
-    app.get('templater').template('user-welcome-email', 'ejs', __dirname+"/../views/welcome-email.ejs")
+    app.get('templater').template(__dirname+"/../views/user-login.ejs", "default")
+    app.get('templater').template(__dirname+"/../views/user-profile.ejs", "page")
+    app.get('templater').template(__dirname+"/../views/user-forgot-email.ejs")
+    app.get('templater').template(__dirname+"/../views/user-forgot-password.ejs")
+    app.get('templater').template(__dirname+"/../views/user-welcome-email.ejs")
+
+    app.get('templater').replace().template(__dirname+"/../views/users/admin-user-form.ejs")
 
     app.get('admin-ui').adminModel(__dirname+'/controllers/adminController.js')
-
-    app.get('templater').provideAfter('template', 'admin-user-form', 'ejs', __dirname+"/../views/users/form.ejs")
 
     this.controllers.api = new APIController(app)
 

@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-04-10
+* @Last Modified 2016-04-14
 */
 
 'use strict';
@@ -143,7 +143,7 @@ export default BaseModel.extend({
   beforeCreate: function(values, cb) {
     // An example encrypt function defined somewhere
     if(values.password && values.password == "") delete values.password
-    values.password = hashPassword(values.password, values.salt)
+    if(values.password) values.password = hashPassword(values.password, values.salt)
     cb();
   },
 

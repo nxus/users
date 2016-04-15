@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2016-02-05 10:09:46
-* @Last Modified 2016-03-05
+* @Last Modified 2016-04-14
 */
 
 'use strict';
@@ -12,7 +12,6 @@ export default class AdminController extends AdminBase {
 
   constructor(app, opts) {
     super(app, opts)
-    app.get('templater').provideAfter('template', 'admin-user-form', 'ejs', __dirname+"/../../views/users/form.ejs")
   }
 
   ignore() {

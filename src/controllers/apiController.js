@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-04-12
+* @Last Modified 2016-04-14
 */
 
 'use strict';
@@ -37,15 +37,15 @@ export default class APIController {
   }
 
   _loginPageHandler(req, res) {
-    return this.app.get('templater').renderPartial('user-login', 'default', {req, user: req.user, redirect: req.param('redirect')}).then(res.send.bind(res))
+    return this.app.get('templater').render('user-login', {req, user: req.user, redirect: req.param('redirect')}).then(res.send.bind(res))
   }
 
   _forgotHandler(req, res) {
-    return this.app.get('templater').renderPartial('user-forgot-password', 'default', {req, user: req.user}).then(res.send.bind(res))
+    return this.app.get('templater').render('user-forgot-password', {req, user: req.user}).then(res.send.bind(res))
   }
 
   _profileHandler(req, res) {
-    return this.app.get('templater').renderPartial('user-profile', 'page', {title: 'Your Profile', user: req.user, req}).then(res.send.bind(res))
+    return this.app.get('templater').render('user-profile', {title: 'Your Profile', user: req.user, req}).then(res.send.bind(res))
   }
 
   _saveProfile(req, res) {
