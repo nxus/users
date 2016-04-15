@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-04-14
+* @Last Modified 2016-04-15
 */
 
 'use strict';
@@ -73,7 +73,7 @@ export default class APIController {
       var link = "http://"+this.app.config.baseUrl+"/login-link?token="+user.resetPasswordToken
       return this.app.get('templater').render('user-forgot-email', {user, email, link, siteName: this.app.config.siteName})
     }).then((content) => {
-      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.baseUrl) 
+      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.host) 
       return this.app.get('mailer').send(email, fromEmail, "Password recovery", content, {html: content})
     }).then(() => {
       req.flash('info', 'An email has been sent to the address you provided.');
