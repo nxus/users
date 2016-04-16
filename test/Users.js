@@ -33,11 +33,6 @@ describe("Users", () => {
     it("should provide models", () => {
       app.get('storage').provide.calledWith('model').should.be.true
     });
-    it("should provide templates", () => {
-      app.get('templater').provide.calledWith('template', 'user-login').should.be.true
-      app.get('templater').provide.calledWith('template', 'user-profile').should.be.true
-      app.get('templater').provide.calledWith('template', 'user-forgot-email').should.be.true
-    });
     it("should provide routes", () => {
       app.get('router').provide.calledWith('route', 'GET', '/logout').should.be.true
       app.get('router').provide.calledWith('route', 'GET', '/forgot').should.be.true
