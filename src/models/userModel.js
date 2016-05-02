@@ -148,9 +148,10 @@ export default BaseModel.extend({
     this
       .findOne(values.id)
       .then((usr) => {
-        if(values.password && values.password.length > 0)
-          values.password = hashPassword(values.password, values.salt)
-        else delete values.password
+        console.log(usr, values)
+        if(usr.password == values.password) return cb()
+        if(values.password && values.password == "") delete values.password
+        if(values.password) values.password = hashPassword(values.password, values.salt)
         cb();
       });
   },
