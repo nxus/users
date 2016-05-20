@@ -1,4 +1,4 @@
-# @nxus/users
+# nxus-users
 
 ## 
 
