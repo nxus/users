@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:57:54
-* @Last Modified 2016-04-15
+* @Last Modified 2016-05-20
 */
 
 'use strict';
@@ -121,7 +121,6 @@ export default class APIController {
     this.app.emit('user.loggedOut', req.user)
     req.session.flash = []
     req.session.save(err => {
-      this.app.log.debug('logged out', req.user)
       req.logout()
       if(req.params.redirect)
         res.redirect(req.params.redirect)

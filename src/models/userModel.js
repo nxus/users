@@ -1,12 +1,12 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 11:32:58
-* @Last Modified 2016-04-14
+* @Last Modified 2016-05-20
 */
 
 'use strict';
 
-import {BaseModel} from '@nxus/storage'
+import {BaseModel} from 'nxus-storage'
 import { Crypto } from 'cryptojs'
 import crypto from 'crypto'
 import _ from 'underscore'
@@ -64,7 +64,10 @@ export default BaseModel.extend({
     salt: { 
       type: 'string'
     },
-    password: 'string',
+    password: {
+      type: 'string',
+      defaultsTo: ''
+    },
     verifyToken: { 
       type: 'string'
     },
@@ -142,8 +145,7 @@ export default BaseModel.extend({
   
   beforeCreate: function(values, cb) {
     // An example encrypt function defined somewhere
-    if(values.password && values.password == "") delete values.password
-    if(values.password) values.password = hashPassword(values.password, values.salt)
+    if(values.password && values.password.length > 0) values.password = hashPassword(values.password, values.salt)
     cb();
   },
 
@@ -152,9 +154,16 @@ export default BaseModel.extend({
     this
       .findOne(values.id)
       .then((usr) => {
-        if(values.password && values.password.length > 0)
+        if(usr.password == values.password) return cb()
+        if(typeof values.password == 'undefined' || values.password.length == 0 || values.password == "") {
+          delete values.password
+        }
+        if(values.password) {
           values.password = hashPassword(values.password, values.salt)
-        else delete values.password
+        } else {
+          values.password = usr.password
+          values.salt = usr.salt
+        }
         cb();
       });
   },

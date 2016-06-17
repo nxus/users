@@ -2,7 +2,7 @@
 
 import Users from '../src/index'
 
-import TestApp from '@nxus/core/lib/test/support/TestApp';
+import TestApp from 'nxus-core/lib/test/support/TestApp';
 
 describe("Users", () => {
   var module;

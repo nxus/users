@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-04-14
-* @Last Modified time: 2016-04-14 17:13:46
+* @Last Modified 2016-05-20
+* @Last Modified time: 2016-05-20 08:36:49
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -92,7 +92,6 @@ import APIController from './controllers/apiController'
 import authMiddleware from './middleware/authMiddleware'
 import ensureAuthenticated from './middleware/ensureAuthenticated'
 import ensureAdmin from './middleware/ensureAdmin'
-import sessionMiddleware from './middleware/sessionMiddleware'
 
 import createAdminIfNone from './tasks/createAdminIfNone'
 
@@ -129,7 +128,6 @@ export default class Users {
 
     this.controllers.api = new APIController(app)
 
-    this.middleware.session = sessionMiddleware(this, app)
     this.middleware.auth = authMiddleware(this, app)
     this.middleware.ensureAuthenticated = ensureAuthenticated(this, app)
     this.middleware.ensureAdmin = ensureAdmin(this, app)

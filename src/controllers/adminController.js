@@ -1,12 +1,12 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2016-02-05 10:09:46
-* @Last Modified 2016-04-14
+* @Last Modified 2016-05-20
 */
 
 'use strict';
 
-import {AdminBase} from '@nxus/admin-ui'
+import {AdminBase} from 'nxus-admin-ui'
 
 export default class AdminController extends AdminBase {
 
