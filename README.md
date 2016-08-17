@@ -79,6 +79,6 @@ Expects to recieve a GET request with the param `redirect`, which is a url where
 
 * * *
 
-## Users
+## index
 
 The Users Module provides a complete user authentication and authorization system.
