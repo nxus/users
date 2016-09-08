@@ -1,12 +1,12 @@
 {
   "name": "nxus-users",
-  "version": "3.0.0",
+  "version": "4.0.0-0",
   "description": "User management module for Nxus apps.",
   "main": "lib",
   "scripts": {
     "preversion": "npm test",
     "postversion": "npm run build-docs && git push && git push --tags",
-    "test": "npm run compile && NODE_ENV=test mocha --compilers js:babel-core/register -R spec",
+    "test": "NODE_ENV=test mocha --compilers js:babel-core/register -R spec test/*.js src/modules/**/test/*.js",
     "compile": "babel src --out-dir lib",
     "prepublish": "npm run compile",
     "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
@@ -27,11 +27,6 @@
   "bugs": {
     "url": "https://github.com/nxus/users/issues"
   },
-  "peerDependencies": {
-    "nxus-core": "^3.0.0",
-    "nxus-storage": "^3.0.0",
-    "nxus-mailer": "^3.0.0"
-  },
   "devDependencies": {
     "documentation": "^4.0.0-beta9",
     "chai": "^3.4.1",
@@ -39,6 +34,8 @@
     "mocha": "^2.2.5",
     "should": "^7.0.2",
     "sinon": "^1.17.2",
+    "babel-plugin-transform-function-bind": "^6.8.0",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
     "babel-cli": "^6.9.0",
     "sails-memory": "^0.10.7",
@@ -48,6 +45,10 @@
     "cookie-session": "^1.1.0",
     "cryptojs": "^2.5.3",
     "glob": "^6.0.1",
+    "nxus-core": "^4.0.0-0",
+    "nxus-storage": "^4.0.0-0",
+    "nxus-templater": "^4.0.0-0",
+    "nxus-mailer": "^4.0.0-0",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
     "routes": "^2.1.0",

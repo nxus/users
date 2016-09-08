@@ -6,6 +6,9 @@
 
 'use strict';
 
+import {application, NxusModule} from 'nxus-core'
+import HasUserModel from '../../HasUserModel'
+
 const defaultUser = {
   email: "admin@nxus.org",
   nameFirst: "Admin",
@@ -15,9 +18,11 @@ const defaultUser = {
   admin: true
 }
 
-export default (app) => {
-  app.on('launch', () => {
-    app.get('storage').getModel('user').then((User) => {
+export class CreateAdminIfNone extends HasUserModel {
+  constructor() {
+    super()
+    app.once('launch', () => {
+      let User = this.models.User
       if(app.config.host)
         defaultUser.email = "admin@"+app.config.host
       if(app.config.NODE_ENV == 'test')
@@ -25,14 +30,14 @@ export default (app) => {
       return User.findOne().where({admin: true}).then((user) => {
         if(!user) {
           return User.create(defaultUser).then(() => {
-            app.log.info('default user created', defaultUser.email, "with password "+defaultUser.password)
+            this.log.info('default user created', defaultUser.email, "with password "+defaultUser.password)
           }).catch((e) => {
-            app.log.info('could not create user', e)
+            this.log.info('could not create user', e)
           })
         }
       }).catch((e) => {
-        app.log.error('Error creating default user', e)
+        this.log.error('Error creating default user', e)
       })
     })
-  })
+  }
 }

@@ -11,7 +11,7 @@
  * 
  * ## Install
  * 
- *     > npm install @nxus/users --save
+ *     > npm install nxus-users --save
  * 
  * ## Quickstart
  * 
@@ -29,7 +29,7 @@
  * 
  * Accessing the user model:
  * 
- *     app.get('storage').getModel('user').then((User) => {
+ *     storage.getModel('users_user').then((User) => {
  *       ...
  *     });
  * 
@@ -60,7 +60,7 @@
  * 
  * A login form preconfigured to work with the login/logout routes. Markup supports basic Bootstrap 3 CSS.
  * 
- *     app.get('templater').render('users-login').then((content) => {
+ *     templater.render('users-login').then((content) => {
  *       ...
  *     }
  * 
@@ -84,76 +84,66 @@
 
 'use strict';
 
-import UserModel from './models/userModel'
-import TeamModel from './models/teamModel'
+import {HasModels} from 'nxus-storage'
+import {router} from 'nxus-router'
 
-import APIController from './controllers/apiController'
-
-import authMiddleware from './middleware/authMiddleware'
-import ensureAuthenticated from './middleware/ensureAuthenticated'
-import ensureAdmin from './middleware/ensureAdmin'
-
-import createAdminIfNone from './tasks/createAdminIfNone'
+import routesRouter from 'routes'
 
 /**
  * The Users Module provides a complete user authentication and authorization system.
  * 
  */
-export default class Users {
-  constructor(app) {
-    this.app = app
-    this.controllers = {}
-    this.tasks = {}
-    this.middleware = {}
+export default class Users extends HasModels {
+  constructor() {
+    super()
+    this.protectedRoutes = new Set()
+    this.adminRoutes = new Set()
 
-    this.protectedRoutes = []
-    this.adminRoutes = []
-
-    app.get('users').use(this).gather('protectedRoute').gather('ensureAdmin')
-
-    app.get('storage').model(UserModel)
-    app.get('storage').model(TeamModel)
-
-    app.get('metrics').capture('user')
+//    app.get('metrics').capture('user')
     
-    app.get('templater').template(__dirname+"/../views/user-login.ejs", "default")
-    app.get('templater').template(__dirname+"/../views/user-profile.ejs", "page")
-    app.get('templater').template(__dirname+"/../views/user-forgot-email.ejs")
-    app.get('templater').template(__dirname+"/../views/user-forgot-password.ejs")
-    app.get('templater').template(__dirname+"/../views/user-welcome-email.ejs")
+//    templater.replace().template(__dirname+"/../views/users/admin-user-form.ejs")
 
-    app.get('templater').replace().template(__dirname+"/../views/users/admin-user-form.ejs")
+//    app.get('admin-ui').adminModel(__dirname+'/controllers/adminController.js')
 
-    app.get('admin-ui').adminModel(__dirname+'/controllers/adminController.js')
 
-    this.controllers.api = new APIController(app)
-
-    this.middleware.auth = authMiddleware(this, app)
-    this.middleware.ensureAuthenticated = ensureAuthenticated(this, app)
-    this.middleware.ensureAdmin = ensureAdmin(this, app)
+    router.default().middleware(::this._ensureAuthenticated)
+    router.default().middleware(::this._ensureAdmin)
     
-    this.tasks.createAdminIfNone = createAdminIfNone(app)
-
-    app.get('storage').on('model.create.user', this._sendWelcomeEmail.bind(this))
-  }
-
-  _sendWelcomeEmail(model, user) {
-    this.app.log.debug('Sending welcome email to', user.email)
-    var link = "http://"+this.app.config.baseUrl+"/login"
-    let tempPass = user.tempPassword
-    delete user.tempPassword
-    this.app.get('templater').render('user-welcome-email', {user, tempPass, link, siteName: this.app.config.siteName}).then((content) => {
-      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.host) 
-      return this.app.get('mailer').send(user.email, fromEmail, "Welcome to "+this.app.config.siteName, content, {html: content})
-    })
   }
 
   protectedRoute(route) {
-    this.protectedRoutes.push(route);
+    this.protectedRoutes.add(route)
   }
 
   ensureAdmin(route) {
-    this.adminRoutes.push(route);
+    this.adminRoutes.add(route)
+  }
+
+  _checkRoute(route, routes) {
+    let r = new routesRouter()
+    r.routes = [];
+    r.routeMap = [];
+    routes.forEach((r) => {
+      r.addRoute(r, () => {})
+    })
+    var match = r.match(route);
+    return typeof match != 'undefined'
+  }
+
+  _ensureAuthenticated(req, res, next) {
+    if (this._checkRoute(req.path, this.protectedRoutes) && !req.isAuthenticated()) {
+      return res.redirect(app.config.loginRoute || '/login?redirect=' + encodeURIComponent(req.originalUrl))
+    }
+    return next()
+  }
+
+  _ensureAdmin(req, res, next) {
+    if (this._checkRoute(req.path, this.adminRoutes)) {
+      if (!req.isAuthenticated()) return res.redirect(app.config.loginRoute || '/login?redirect=' + encodeURIComponent(req.originalUrl))
+      if (!req.user.admin) return res.send(403)
+      else return next()
+    }
+    return next()
   }
 }
 
