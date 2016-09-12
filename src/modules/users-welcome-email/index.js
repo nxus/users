@@ -1,5 +1,6 @@
 import {application, NxusModule} from 'nxus-core'
 import {storage} from 'nxus-storage'
+import {mailer} from 'nxus-mailer'
 import {templater} from 'nxus-templater'
 
 
