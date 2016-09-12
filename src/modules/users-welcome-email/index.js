@@ -9,7 +9,7 @@ export default class UsersWelcomeEmail extends NxusModule {
     super()
     templater.default().template(__dirname+"/../../../templates/user-welcome-email.ejs")
 
-    storage.on('model.create.users_user', ::this._sendWelcomeEmail)
+    storage.on('model.create.users-user', ::this._sendWelcomeEmail)
   }
 
   _sendWelcomeEmail(model, user) {

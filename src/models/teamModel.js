@@ -9,7 +9,7 @@
 import {BaseModel} from 'nxus-storage'
 
 module.exports = BaseModel.extend({
-  identity: 'users_team',
+  identity: 'users-team',
   connection: 'default',
   attributes: {
     name: 'string',
@@ -18,7 +18,7 @@ module.exports = BaseModel.extend({
       defaultsTo: true 
     },
     users: {
-      collection: 'users_user',
+      collection: 'users-user',
       via: 'team'
     },
     metadata: 'json'

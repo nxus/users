@@ -46,7 +46,7 @@ const Roles = {
 }
 
 export default BaseModel.extend({
-  identity: 'users_user',
+  identity: 'users-user',
   connection: 'default',
   attributes: {
     email: {
@@ -84,7 +84,7 @@ export default BaseModel.extend({
       defaultsTo: 0 
     },
     team: {
-      model: 'users_team'
+      model: 'users-team'
     },
     admin: { 
       type: 'boolean', 
