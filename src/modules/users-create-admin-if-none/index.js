@@ -6,7 +6,7 @@
 
 'use strict';
 
-import {application, NxusModule} from 'nxus-core'
+import {application as app, NxusModule} from 'nxus-core'
 import HasUserModel from '../../HasUserModel'
 
 const defaultUser = {
@@ -18,7 +18,7 @@ const defaultUser = {
   admin: true
 }
 
-export class CreateAdminIfNone extends HasUserModel {
+export default class CreateAdminIfNone extends HasUserModel {
   constructor() {
     super()
     app.once('launch', () => {

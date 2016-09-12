@@ -2,9 +2,10 @@ import passport from 'passport'
 
 import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
+import {templater} from 'nxus-templater'
 import HasUserModel from '../../HasUserModel'
 
-class UsersLoginRoutes extends HasUserModel {
+export default class UsersLoginRoutes extends HasUserModel {
   constructor() {
     super()
     

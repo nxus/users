@@ -9,30 +9,36 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 
-module.exports = (plugin, app) => {
-  passport.use(
-    new LocalStrategy((username, password, done) => {
-      app.get('storage').getModel('user').then((User) => {
-        User.findOne({ email: username })
-        .then((user) => {
-          if(!user)                           return done(null, false, { message: 'Incorrect email address.' });
-          if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' });
-          if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' });
-          return done(null, user);
+import {NxusModule} from 'nxus-core'
+import {router} from 'nxus-router'
+
+export default class UsersAuthMiddleware extends NxusModule {
+  constructor() {
+    super()
+    passport.use(
+      new LocalStrategy((username, password, done) => {
+        app.get('storage').getModel('user').then((User) => {
+          User.findOne({ email: username })
+            .then((user) => {
+              if(!user)                           return done(null, false, { message: 'Incorrect email address.' });
+              if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' });
+              if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' });
+              return done(null, user);
+            });
         });
-      });
-    })
-  );
+      })
+    );
 
-  passport.serializeUser((user, done) => {
-    done(null, user);
-  });
+    passport.serializeUser((user, done) => {
+      done(null, user);
+    });
 
-  passport.deserializeUser((user, done) =>{
-    done(null, user);
-  });
+    passport.deserializeUser((user, done) =>{
+      done(null, user);
+    });
 
-  app.get('router').provideBefore('middleware', passport.initialize());
-  app.get('router').provideBefore('middleware', passport.session());
-  return passport;
+    router.default().provide('middleware', passport.initialize());
+    router.default().provide('middleware', passport.session());
+//    return passport;
+  }
 };

@@ -93,7 +93,7 @@ import routesRouter from 'routes'
  * The Users Module provides a complete user authentication and authorization system.
  * 
  */
-export default class Users extends HasModels {
+class Users extends HasModels {
   constructor() {
     super()
     this.protectedRoutes = new Set()
@@ -147,3 +147,5 @@ export default class Users extends HasModels {
   }
 }
 
+const users = Users.getProxy()
+export {Users as default, users}

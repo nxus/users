@@ -19,14 +19,5 @@ describe("Users", () => {
       module = new Users();
     });
 
-    it("should provide routes", () => {
-      app.get('router').provide.calledWith('route', 'GET', '/logout').should.be.true
-      app.get('router').provide.calledWith('route', 'GET', '/forgot').should.be.true
-      app.get('router').provide.calledWith('route', 'POST', '/forgot').should.be.true
-      app.get('router').provide.calledWith('route', 'GET', '/login-link').should.be.true
-      app.get('router').provide.calledWith('route', 'GET', '/profile').should.be.true
-      app.get('router').provide.calledWith('route', 'GET', '/login').should.be.true
-      app.get('router').provide.calledWith('route', 'POST', '/profile/save').should.be.true
-    });
   });
 });

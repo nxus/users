@@ -1,5 +1,6 @@
 import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
+import {templater} from 'nxus-templater'
 import HasUserModel from '../../HasUserModel'
 
 export default class UsersProfile extends HasUserModel {
