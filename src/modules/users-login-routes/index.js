@@ -9,7 +9,7 @@ export default class UsersLoginRoutes extends HasUserModel {
   constructor() {
     super()
     
-    templater.default().template(__dirname+"/../../../templates/user-login.ejs", "default")
+    templater.default().template(__dirname+"/../../../templates/user-login.ejs", "bare")
     templater.default().template(__dirname+"/../../../templates/user-forgot-email.ejs")
     templater.default().template(__dirname+"/../../../templates/user-forgot-password.ejs")
     
