@@ -86,6 +86,7 @@
 
 import {HasModels} from 'nxus-storage'
 import {router} from 'nxus-router'
+import {application as app} from 'nxus-core'
 
 import routesRouter from 'routes'
 
@@ -123,8 +124,8 @@ class Users extends HasModels {
     let r = new routesRouter()
     r.routes = [];
     r.routeMap = [];
-    routes.forEach((r) => {
-      r.addRoute(r, () => {})
+    routes.forEach((x) => {
+      r.addRoute(x, () => {})
     })
     var match = r.match(route);
     return typeof match != 'undefined'
