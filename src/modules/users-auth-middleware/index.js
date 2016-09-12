@@ -9,33 +9,31 @@
 import passport from 'passport'
 import LocalStrategy from 'passport-local'
 
-import {NxusModule} from 'nxus-core'
+import HasUserModel from '../../HasUserModel'
 import {router} from 'nxus-router'
 
-export default class UsersAuthMiddleware extends NxusModule {
+export default class UsersAuthMiddleware extends HasUserModel {
   constructor() {
     super()
     passport.use(
       new LocalStrategy((username, password, done) => {
-        app.get('storage').getModel('user').then((User) => {
-          User.findOne({ email: username })
-            .then((user) => {
-              if(!user)                           return done(null, false, { message: 'Incorrect email address.' });
-              if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' });
-              if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' });
-              return done(null, user);
-            });
-        });
+        this.models.User.findOne({ email: username })
+          .then((user) => {
+            if(!user)                           return done(null, false, { message: 'Incorrect email address.' })
+            if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' })
+            if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' })
+            return done(null, user)
+          })
       })
-    );
+    )
 
     passport.serializeUser((user, done) => {
-      done(null, user);
-    });
+      done(null, user)
+    })
 
     passport.deserializeUser((user, done) =>{
-      done(null, user);
-    });
+      done(null, user)
+    })
 
     router.default().provide('middleware', passport.initialize());
     router.default().provide('middleware', passport.session());

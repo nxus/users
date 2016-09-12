@@ -29,7 +29,7 @@
  * 
  * Accessing the user model:
  * 
- *     storage.getModel('users_user').then((User) => {
+ *     storage.getModel('users-user').then((User) => {
  *       ...
  *     });
  * 
