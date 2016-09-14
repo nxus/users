@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-08-09
-* @Last Modified time: 2016-08-09 09:20:07
+* @Last Modified 2016-09-14
+* @Last Modified time: 2016-09-14 07:09:07
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -107,8 +107,8 @@ class Users extends HasModels {
 //    app.get('admin-ui').adminModel(__dirname+'/controllers/adminController.js')
 
 
-    router.default().middleware(::this._ensureAuthenticated)
-    router.default().middleware(::this._ensureAdmin)
+    router.replace().middleware(::this._ensureAuthenticated)
+    router.replace().middleware(::this._ensureAdmin)
     
   }
 
