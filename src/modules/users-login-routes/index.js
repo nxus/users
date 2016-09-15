@@ -15,7 +15,6 @@ export default class UsersLoginRoutes extends HasUserModel {
     templater.default().template(__dirname+"/../../../templates/user-forgot-password.ejs")
 
     users.getBaseUrl().then((baseUrl) => {
-      console.log('baseUrl', baseUrl)
       this.baseUrl = baseUrl
       router.route('GET', this.baseUrl+'logout', ::this._logoutHandler)
       router.route('POST', this.baseUrl+'forgot', ::this._forgotSaveHandler)
@@ -38,7 +37,7 @@ export default class UsersLoginRoutes extends HasUserModel {
     var email = req.param('email')
     return this.models.User.findOne({email}).then((user) => {
       if(!user) throw new Error('No user matching that email was found.')
-      var link = "http://"+this.app.config.this.baseUrl+this.baseUrl+"login-link?token="+user.resetPasswordToken
+      var link = "http://"+this.app.config.baseUrl+this.baseUrl+"login-link?token="+user.resetPasswordToken
       return templater.render('user-forgot-email', {user, email, link, siteName: this.app.config.siteName})
     }).then((content) => {
       let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.host) 
