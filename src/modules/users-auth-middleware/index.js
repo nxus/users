@@ -1,7 +1,7 @@
 /* 
 * @Author: Mike Reich
 * @Date:   2015-12-14 12:01:06
-* @Last Modified 2015-12-15
+* @Last Modified 2016-09-15
 */
 
 'use strict';
@@ -20,8 +20,8 @@ export default class UsersAuthMiddleware extends HasUserModel {
         this.models.User.findOne({ email: username })
           .then((user) => {
             if(!user)                           return done(null, false, { message: 'Incorrect email address.' })
-            if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' })
             if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' })
+            if(!user.enabled)                   return done(null, false, { message: 'Your account has been disabled.' })
             return done(null, user)
           })
       })

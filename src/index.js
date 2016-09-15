@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-09-14
-* @Last Modified time: 2016-09-14 07:09:07
+* @Last Modified 2016-09-15
+* @Last Modified time: 2016-09-15 11:05:12
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -112,6 +112,21 @@ class Users extends HasModels {
     
   }
 
+  _defaultConfig() {
+    return {
+      baseUrl: '/'
+    }
+  }
+
+  getBaseUrl() {
+    let baseUrl = this.config.baseUrl
+
+    if(baseUrl == '') baseUrl = '/'
+    if(baseUrl[baseUrl.length-1] != '/') baseUrl += '/'
+    if(baseUrl.length > 1 && baseUrl[0] != '/') baseUrl = '/'+baseUrl
+    return baseUrl
+  }
+
   protectedRoute(route) {
     this.protectedRoutes.add(route)
   }
@@ -133,14 +148,14 @@ class Users extends HasModels {
 
   _ensureAuthenticated(req, res, next) {
     if (this._checkRoute(req.path, this.protectedRoutes) && !req.isAuthenticated()) {
-      return res.redirect(app.config.loginRoute || '/login?redirect=' + encodeURIComponent(req.originalUrl))
+      return res.redirect(app.config.loginRoute || this.getBaseUrl()+'login?redirect=' + encodeURIComponent(req.originalUrl))
     }
     return next()
   }
 
   _ensureAdmin(req, res, next) {
     if (this._checkRoute(req.path, this.adminRoutes)) {
-      if (!req.isAuthenticated()) return res.redirect(app.config.loginRoute || '/login?redirect=' + encodeURIComponent(req.originalUrl))
+      if (!req.isAuthenticated()) return res.redirect(app.config.loginRoute || this.getBaseUrl()+'login?redirect=' + encodeURIComponent(req.originalUrl))
       if (!req.user.admin) return res.send(403)
       else return next()
     }
