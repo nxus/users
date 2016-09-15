@@ -2,6 +2,7 @@
 
 import sinon from 'sinon'
 import {router} from 'nxus-router'
+import {application} from 'nxus-core'
 import Users from '../'
 
 
@@ -10,6 +11,7 @@ describe("Users Login Routes", () => {
 
   before(() => {
 //    sinon.spy(router, 'provide')
+    application.config['users'] = {baseUrl: "/"}
   })
    
   describe("Load", function() {
