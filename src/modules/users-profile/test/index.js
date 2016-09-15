@@ -4,7 +4,7 @@ import sinon from 'sinon'
 import {router} from 'nxus-router'
 import {application as app} from 'nxus-core'
 import UsersProfile from '../'
-import {users} from 'nxus-users'
+import {users} from '../../../'
 
 
 describe("Users Profile", () => {
