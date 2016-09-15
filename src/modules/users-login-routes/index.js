@@ -3,7 +3,7 @@ import passport from 'passport'
 import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
 import {templater} from 'nxus-templater'
-import {users} from 'nxus-users'
+import {users} from '../../'
 import HasUserModel from '../../HasUserModel'
 
 export default class UsersLoginRoutes extends HasUserModel {
