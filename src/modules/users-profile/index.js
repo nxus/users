@@ -9,8 +9,12 @@ export default class UsersProfile extends HasUserModel {
     
     templater.default().template(__dirname+"/../../../templates/user-profile.ejs", "page")
 
-    router.route('GET', '/profile', ::this._profileHandler)
-    router.route('POST', '/profile/save', ::this._saveProfile)
+    let baseUrl = application.config['users'].baseUrl
+
+    if(baseUrl[baseUrl.length-1] != '/') baseUrl += '/'
+
+    router.route('GET', baseUrl+'profile', ::this._profileHandler)
+    router.route('POST', baseUrl+'profile/save', ::this._saveProfile)
   }
 
   _profileHandler(req, res) {
@@ -27,7 +31,7 @@ export default class UsersProfile extends HasUserModel {
     } 
     return this.models.User.update(user.id, user).then(() => {
       req.flash('success', 'Your profile has been saved.')
-      req.login(user, () => {res.redirect("/profile")})
+      req.login(user, () => {res.redirect(baseUrl+"profile")})
     })
   }
 }

@@ -13,13 +13,16 @@ export default class UsersLoginRoutes extends HasUserModel {
     templater.default().template(__dirname+"/../../../templates/user-forgot-email.ejs")
     templater.default().template(__dirname+"/../../../templates/user-forgot-password.ejs")
     
+    let baseUrl = application.config['users'].baseUrl
+
+    if(baseUrl[baseUrl.length-1] != '/') baseUrl += '/'
     
-    router.route('GET', '/logout', ::this._logoutHandler)
-    router.route('POST', '/forgot', ::this._forgotSaveHandler)
-    router.route('GET', '/login-link', ::this._loginLinkHandler)
-    router.route('GET', '/login', ::this._loginPageHandler)
-    router.route('GET', '/forgot', ::this._forgotHandler)
-    router.route('POST', '/login', [::this._authenticationCallback, ::this._loginHandler])
+    router.route('GET', baseUrl+'logout', ::this._logoutHandler)
+    router.route('POST', baseUrl+'forgot', ::this._forgotSaveHandler)
+    router.route('GET', baseUrl+'login-link', ::this._loginLinkHandler)
+    router.route('GET', baseUrl+'login', ::this._loginPageHandler)
+    router.route('GET', baseUrl+'forgot', ::this._forgotHandler)
+    router.route('POST', baseUrl+'login', [::this._authenticationCallback, ::this._loginHandler])
   }
 
   _loginPageHandler(req, res) {
@@ -34,17 +37,17 @@ export default class UsersLoginRoutes extends HasUserModel {
     var email = req.param('email')
     return this.models.User.findOne({email}).then((user) => {
       if(!user) throw new Error('No user matching that email was found.')
-      var link = "http://"+this.app.config.baseUrl+"/login-link?token="+user.resetPasswordToken
+      var link = "http://"+this.app.config.baseUrl+baseUrl+"login-link?token="+user.resetPasswordToken
       return templater.render('user-forgot-email', {user, email, link, siteName: this.app.config.siteName})
     }).then((content) => {
       let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.host) 
       return this.app.get('mailer').send(email, fromEmail, "Password recovery", content, {html: content})
     }).then(() => {
       req.flash('info', 'An email has been sent to the address you provided.');
-      res.redirect('/login');
+      res.redirect(baseUrl+'login');
     }).catch((e) => {
       req.flash('error', e)
-      res.redirect('/login');
+      res.redirect(baseUrl+'login');
     });
   }
 
@@ -52,14 +55,14 @@ export default class UsersLoginRoutes extends HasUserModel {
     var resetPasswordToken = req.param('token')
     return this.models.User.findOne({resetPasswordToken}).then((user) => {
       if(!user) throw new Error('No user found')
-      req.login(user, () => {res.redirect('/profile')})
+      req.login(user, () => {res.redirect(baseUrl+'profile')})
     }).catch(() => {
-      res.redirect('/login')
+      res.redirect(baseUrl+'login')
     })
   }
   
   _authenticationCallback(req, res, next) {
-    let failureRedirect = '/login'
+    let failureRedirect = baseUrl+'login'
     if (req.param.redirect) {
       failureRedirect += '?redirect=' + encodeURIComponent(req.param('redirect'))
     }
@@ -84,7 +87,7 @@ export default class UsersLoginRoutes extends HasUserModel {
       if(req.params.redirect)
         res.redirect(req.params.redirect)
       else
-        res.redirect('/login')
+        res.redirect(baseUrl+'login')
     })
   }
 }

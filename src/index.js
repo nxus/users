@@ -1,8 +1,8 @@
 /* 
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
-* @Last Modified 2016-09-14
-* @Last Modified time: 2016-09-14 07:09:07
+* @Last Modified 2016-09-15
+* @Last Modified time: 2016-09-15 07:17:52
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -110,6 +110,12 @@ class Users extends HasModels {
     router.replace().middleware(::this._ensureAuthenticated)
     router.replace().middleware(::this._ensureAdmin)
     
+  }
+
+  _defaultConfig() {
+    return {
+      baseUrl: '/'
+    }
   }
 
   protectedRoute(route) {
