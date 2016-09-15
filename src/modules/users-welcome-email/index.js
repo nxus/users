@@ -2,7 +2,7 @@ import {application, NxusModule} from 'nxus-core'
 import {storage} from 'nxus-storage'
 import {mailer} from 'nxus-mailer'
 import {templater} from 'nxus-templater'
-
+import {users} from '../../../'
 
 export default class UsersWelcomeEmail extends NxusModule {
   constructor() {
@@ -10,6 +10,10 @@ export default class UsersWelcomeEmail extends NxusModule {
     templater.default().template(__dirname+"/../../../templates/user-welcome-email.ejs")
 
     storage.on('model.create.users-user', ::this._sendWelcomeEmail)
+
+    users.getBaseUrl().then((baseUrl) => {
+      this.baseUrl = baseUrl
+    })
   }
 
   _sendWelcomeEmail(model, user) {

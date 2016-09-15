@@ -1,6 +1,7 @@
 import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
 import {templater} from 'nxus-templater'
+import {users} from 'nxus-users'
 import HasUserModel from '../../HasUserModel'
 
 export default class UsersProfile extends HasUserModel {
@@ -9,12 +10,11 @@ export default class UsersProfile extends HasUserModel {
     
     templater.default().template(__dirname+"/../../../templates/user-profile.ejs", "page")
 
-    let baseUrl = application.config['users'].baseUrl
-
-    if(baseUrl[baseUrl.length-1] != '/') baseUrl += '/'
-
-    router.route('GET', baseUrl+'profile', ::this._profileHandler)
-    router.route('POST', baseUrl+'profile/save', ::this._saveProfile)
+    users.getBaseUrl().then((baseUrl) => {
+      this.baseUrl = baseUrl
+      router.route('GET', this.baseUrl+'profile', ::this._profileHandler)
+      router.route('POST', this.baseUrl+'profile/save', ::this._saveProfile)
+    })
   }
 
   _profileHandler(req, res) {
@@ -31,7 +31,7 @@ export default class UsersProfile extends HasUserModel {
     } 
     return this.models.User.update(user.id, user).then(() => {
       req.flash('success', 'Your profile has been saved.')
-      req.login(user, () => {res.redirect(baseUrl+"profile")})
+      req.login(user, () => {res.redirect(this.baseUrl+"profile")})
     })
   }
 }

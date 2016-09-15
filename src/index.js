@@ -2,7 +2,7 @@
 * @Author: mike
 * @Date:   2015-12-14 07:52:50
 * @Last Modified 2016-09-15
-* @Last Modified time: 2016-09-15 07:17:52
+* @Last Modified time: 2016-09-15 10:29:04
 */
 /**
  * [![Build Status](https://travis-ci.org/nxus/users.svg?branch=master)](https://travis-ci.org/nxus/users)
@@ -116,6 +116,15 @@ class Users extends HasModels {
     return {
       baseUrl: '/'
     }
+  }
+
+  getBaseUrl() {
+    let baseUrl = this.config.baseUrl
+
+    if(baseUrl == '') baseUrl = '/'
+    if(baseUrl[baseUrl.length-1] != '/') baseUrl += '/'
+    if(baseUrl.length > 1 && baseUrl[0] != '/') baseUrl = '/'+baseUrl
+    return baseUrl
   }
 
   protectedRoute(route) {

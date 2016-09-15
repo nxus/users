@@ -2,6 +2,8 @@
 
 import Users from '../src/index'
 
+import {application as app} from 'nxus-core'
+
 describe("Users", () => {
   var module;
    
@@ -20,4 +22,18 @@ describe("Users", () => {
     });
 
   });
+
+  describe("getBaseUrl", () => {
+    it("should return the baseUrl", () => {
+      app.config['users'] = {baseUrl: '/'}
+      module = new Users();
+      module.getBaseUrl().should.equal('/')
+    })
+
+    it("should append and prepend a slash if not present", () => {
+      app.config['users'] = {baseUrl: 'test'}
+      module = new Users();
+      module.getBaseUrl().should.equal('/test/')
+    })
+  })
 });
