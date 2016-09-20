@@ -1,7 +1,5 @@
 'use strict';
 
-import Promise from 'bluebird'
-
 import sinon from 'sinon'
 import {router} from 'nxus-router'
 import {application as app} from 'nxus-core'

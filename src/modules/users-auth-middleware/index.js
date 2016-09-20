@@ -17,7 +17,7 @@ export default class UsersAuthMiddleware extends HasUserModel {
     super()
     passport.use(
       new LocalStrategy((username, password, done) => {
-        this.models.User.findOne({ email: username })
+        this.models.User.findOne({ email: username }).populate('roles').populate('team')
           .then((user) => {
             if(!user)                           return done(null, false, { message: 'Incorrect email address.' })
             if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' })
