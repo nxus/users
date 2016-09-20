@@ -18,7 +18,7 @@ export default class UsersProfile extends HasUserModel {
   }
 
   _profileHandler(req, res) {
-    return templater.render('user-profile', {title: 'Your Profile', user: req.user, req}).then(::res.send)
+    return templater.render('user-profile', {user: req.user, req}).then(::res.send)
   }
 
   _saveProfile(req, res) {
