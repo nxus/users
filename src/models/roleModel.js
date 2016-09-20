@@ -11,7 +11,7 @@ export default BaseModel.extend({
     },
 
     users: {
-      collection: 'users-user'
+      collection: 'users-user',
       via: 'roles'
     }
   }

@@ -12,8 +12,8 @@ class UserPermissions extends NxusModule {
     this._permissions = {}
     this._routePermissions = {}
 
-    router.middleare(::this._userMiddleware)
-    router.middleare(::this._checkMiddleware)
+    router.middleware(::this._userMiddleware)
+    router.middleware(::this._checkMiddleware)
 
     // Need to register admin page for PermissionsList / Role definition
     // that uses the list of available permissions
@@ -50,8 +50,8 @@ class UserPermissions extends NxusModule {
         next = handler
       }
       req.checkObject = checkObject
-      if (req.user.permissions.includes(name)) {
-        handler()
+      if (req.user.permissions.has(name)) {
+        next()
       } else {
         res.status(403).send("Permission Denied")
       }
@@ -59,7 +59,8 @@ class UserPermissions extends NxusModule {
   }
 
   _checkMiddleware(req, res, next) {
-    let routePermission = this._routePermissions[req.route.path]
+    // TODO this needs to check for route matches not just full path for params
+    let routePermission = this._routePermissions[req.path]
     if (routePermission) {
       let check = this._checkPermission(routePermission,
                                         this._permissions[routePermission].checkObject)
@@ -70,8 +71,10 @@ class UserPermissions extends NxusModule {
   }
 
   _userMiddleware(req, res, next) {
-    req.user.permissions = PermissionManager(req.user, this._permissions)
-    req.user.permissions.populate().then(next)
+    if (req.user) {
+      req.user.permissions = new PermissionManager(req.user, this._permissions)
+    }
+    next()
   }
 
 }

@@ -164,5 +164,5 @@ class Users extends HasModels {
 }
 
 const users = Users.getProxy()
-import {permissions} from './modules/user-permissions'
+import {permissions} from './modules/users-permissions'
 export {Users as default, users, permissions}

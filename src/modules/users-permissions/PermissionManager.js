@@ -3,16 +3,18 @@ class PermissionManager {
   constructor(user, permissionObjs) {
     this._user = user
     this._permisionObjs = permissionObjs
+    
     // construct user permissions list
-    this._permissions = []
-  }
-
-  populate() {
-    return Promise.resolve()
+    this._permissions = new Set()
+    this._user.roles.forEach((role) => {
+      for (let p of role.permissions) {
+        this._permissions.add(p)
+      }
+    })
   }
 
   allow(permissionName, obj = null) {
-    if (!this.includes(permissionName)) {
+    if (!this.has(permissionName)) {
       return false
     }
     if (obj && this._permissionObjs[permissionName].checkObject) {
@@ -22,10 +24,12 @@ class PermissionManager {
     }
   }
 
-  includes(permissionName) {
+  has(permissionName) {
     if (this._user.admin) {
       return true
     }
-    return this._permissions.includes(permissionName)
+    return this._permissions.has(permissionName)
   }
 }
+
+export {PermissionManager as default}
