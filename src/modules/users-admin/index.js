@@ -14,6 +14,7 @@ class UsersAdmin extends NxusModule {
       
     admin.manage({
       model: 'users-team',
+      displayName: 'Teams',
       displayFields: [
         'name',
         'enabled'
@@ -21,6 +22,7 @@ class UsersAdmin extends NxusModule {
     })
     admin.manage({
       model: 'users-role',
+      displayName: 'Roles',
       displayFields: [
         'role'
       ]

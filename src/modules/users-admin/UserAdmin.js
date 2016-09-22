@@ -4,6 +4,7 @@ export default class UserAdmin extends AdminController {
   constructor(opts) {
     opts = {
       model: 'users-user',
+      displayName: 'Users'
       displayFields: [
         'email',
         'nameFirst',
