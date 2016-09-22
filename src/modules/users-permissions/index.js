@@ -15,9 +15,6 @@ class UserPermissions extends NxusModule {
     router.middleware(::this._userMiddleware)
     router.middleware(::this._checkMiddleware)
 
-    // Need to register admin page for PermissionsList / Role definition
-    // that uses the list of available permissions
-    //
     // Also need to write default roles if they do not exist
   }
 
@@ -42,6 +39,10 @@ class UserPermissions extends NxusModule {
       // Wrap handler
       return _checkPermission(name, checkObject, handler)
     }
+  }
+
+  getPermissions() {
+    return this._permissions
   }
 
   _checkPermission(name, checkObject, handler) {
@@ -79,5 +80,5 @@ class UserPermissions extends NxusModule {
 
 }
 
-const userPermissions = UserPermissions.getProxy()
-export {UserPermissions as default, userPermissions}
+const permissions = UserPermissions.getProxy()
+export {UserPermissions as default, permissions}

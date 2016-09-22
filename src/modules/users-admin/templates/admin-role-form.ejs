@@ -1,0 +1,25 @@
+
+                <form role="form" action="" method="POST" class="form-horizontal form-bordered">
+                    <input type="hidden" id="id" name="id" value="<%= object.id %>" />
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="col-sm-3 to-right" for="role">Role Name</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="role" class="form-control" value="<%= object.role %>" placeholder="Enter role name" name="role" required>
+                            </div>
+                        </div>
+                        <% permissions.forEach(function(perm) { %>
+                          <div class="form-group">
+                            <label class="col-sm-3 to-right" for="permissions_<%=perm.name%>"><%= perm.name %></label>
+                            <div class="col-sm-7">
+                                <input type="checkbox" id="permissions_<%=perm.name%>" value="<%=perm.name%>"  <%= (object.permissions && object.permissions.includes(perm.name)) ? 'checked="checked"' : '' %> name="permissions">
+                            </div>
+                          </div>
+                        <% }) %>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-7">
+                                <button class="btn btn-theme" type="submit">Save Role</button>        
+                            </div>
+                        </div>
+                    </div>
+                </form>
