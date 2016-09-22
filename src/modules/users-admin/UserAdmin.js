@@ -4,7 +4,7 @@ export default class UserAdmin extends AdminController {
   constructor(opts) {
     opts = {
       model: 'users-user',
-      displayName: 'Users'
+      displayName: 'Users',
       displayFields: [
         'email',
         'nameFirst',
@@ -20,7 +20,6 @@ export default class UserAdmin extends AdminController {
   }
 
   save(req, res) {
-    console.log("Ready to save")
     let user = req.body
     user.enabled = true
     if(!user.admin)
