@@ -13,7 +13,7 @@ class PermissionManager {
     })
   }
 
-  allow(permissionName, obj = null) {
+  allows(permissionName, obj = null) {
     if (!this.has(permissionName)) {
       return false
     }
