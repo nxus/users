@@ -1,21 +1,35 @@
-import {NxusModule} from 'nxus-core'
+import {application} from 'nxus-core'
+import {HasModels} from 'nxus-storage'
 import _ from 'underscore'
+import Promise from 'bluebird'
 
 import {router} from 'nxus-router'
 
 import PermissionManager from './PermissionManager'
 
-class UserPermissions extends NxusModule {
+class UsersPermissions extends HasModels {
   constructor(opts) {
+    opts.modelNames = {'users-role': 'Role'}
     super(opts)
 
     this._permissions = {}
     this._routePermissions = {}
 
+    this._defaultRoles = {}
+
     router.middleware(::this._userMiddleware)
     router.middleware(::this._checkMiddleware)
 
-    // Also need to write default roles if they do not exist
+    // Create roles if they do not exist, adding missing perms
+    application.on('startup', () => {
+      return Promise.map(_.keys(this._defaultRoles), (role) => {
+        return this.models.Role.createOrUpdate({role}, {role}).then((roleObj) => {
+          this.log.info("Created role", role)
+          roleObj.permissions = _.union(roleObj.permissions || [], this._defaultRoles[role])
+          return roleObj.save()
+        })
+      })
+    })
   }
 
   /*
@@ -23,14 +37,24 @@ class UserPermissions extends NxusModule {
    * @param {string} name Permission name
    * @param {function|string} [handler|route] A handler or route to wrap with a permission check
    * @param {function} [checkObject] function(obj, user) that returns boolean for access to a specific object
-   * @param {string} [roleName] Default role name to contain this permission
+   * @param {string|array} [roleName] Default role name(s) to contain this permission
    */
   allow(name, handler = null, checkObject = null, roleName = null) {
     this._permissions[name] = {
       name,
       handler,
       checkObject,
-      roleName
+    }
+    if(roleName) {
+      if (!_.isArray(roleName)) {
+        roleName = [roleName]
+      }
+      for (let role of roleName) {
+        if (!this._defaultRoles[role]) {
+          this._defaultRoles[role] = []
+        }
+        this._defaultRoles[role].push(name)
+      }
     }
     if (_.isString(handler)) {
       // Route
@@ -80,5 +104,5 @@ class UserPermissions extends NxusModule {
 
 }
 
-const permissions = UserPermissions.getProxy()
-export {UserPermissions as default, permissions}
+const permissions = UsersPermissions.getProxy()
+export {UsersPermissions as default, permissions}
