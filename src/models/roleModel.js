@@ -6,6 +6,10 @@ export default BaseModel.extend({
     role: {
       type: 'string'
     },
+    systemDefined: {
+      type: 'boolean',
+      defaultsTo: false
+    },
     permissions: {
       type: 'array'
     },

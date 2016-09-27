@@ -6,13 +6,18 @@ class PermissionManager {
     
     // construct user permissions list
     this._permissions = new Set()
-    this._user.roles.forEach((role) => {
+    this.addRoles(this._user.roles)
+  }
+
+  addRoles(roles) {
+    for (let role of roles) {
       for (let p of role.permissions) {
         this._permissions.add(p)
       }
-    })
+    }
   }
 
+  // TODO checkObject needs updating here - roles added per-object tracked above?
   allows(permissionName, obj = null) {
     if (!this.has(permissionName)) {
       return false
