@@ -1,5 +1,5 @@
 import {application} from 'nxus-core'
-import {default as storage, HasModels} from 'nxus-storage'
+import {storage, HasModels} from 'nxus-storage'
 import _ from 'underscore'
 import Promise from 'bluebird'
 
@@ -98,9 +98,8 @@ class UsersPermissions extends HasModels {
   _checkMiddleware(req, res, next) {
     let routePermission = this._routesPermissions.match(req.path)
     // TODO this probably needs to support nested/multiple matches
-    this.log.info("Checking for route permission", req.path)
     if (req.user && routePermission) {
-      let permission = routePermission()
+      let permission = routePermission.fn()
       this.log.info("Checking route permission for ", req.path, permission, routePermission.params)
       this._getObjectRoles(req.user, permission, routePermission.params).then((roles) => {
         req.user.permissions.addRoles(roles)
@@ -119,14 +118,16 @@ class UsersPermissions extends HasModels {
     next()
   }
 
-  _getObjectPermissions(user, permission, params) {
+  _getObjectRoles(user, permission, params) {
     let objectParams = this._permissions[permission].objectParams
-    return Promise.map(objectParams, (param) => {
-      return storage.get(objectParams[param])
-    }).then((model) => {
-      return model.find({user: user, object: params[param]}).populate('role')
+    return Promise.map(_.keys(objectParams), (param) => {
+      return storage.getModel(objectParams[param]).then((model) => {
+        return model.find({user: user.id, object: params[param]}).populate('role')
+      }).then((roles) => {
+        return _.pluck(roles, 'role')
+      })
     }).then((roles) => {
-      return _.pluck(roles, 'role')
+      return _.flatten(roles)
     })
   }
 
