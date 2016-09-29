@@ -101,10 +101,8 @@ class UsersPermissions extends HasModels {
     if (req.user && routePermission) {
       let permission = routePermission.fn()
       this.log.info("Checking route permission for ", req.path, permission, routePermission.params)
-      this._getObjectRoles(req.user, permission, routePermission.params).then((roles) => {
-        req.user.permissions.addRoles(roles)
-        let check = this._checkPermission(permission)
-        check(req, res, next)
+      this._setObjectRoles(req.user, permission, routePermission.params).then(() => {
+        this._checkPermission(permission)(req, res, next)
       })
     } else {
       next()
@@ -113,21 +111,20 @@ class UsersPermissions extends HasModels {
 
   _userMiddleware(req, res, next) {
     if (req.user) {
-      req.user.permissions = new PermissionManager(req.user, this._permissions)
+      req.user.permissions = new PermissionManager(req.user)
     }
     next()
   }
 
-  _getObjectRoles(user, permission, params) {
+  _setObjectRoles(user, permission, params) {
     let objectParams = this._permissions[permission].objectParams
     return Promise.map(_.keys(objectParams), (param) => {
+      let objectId = params[param]
       return storage.getModel(objectParams[param]).then((model) => {
-        return model.find({user: user.id, object: params[param]}).populate('role')
+        return model.find({user: user.id, object: objectId}).populate('role')
       }).then((roles) => {
-        return _.pluck(roles, 'role')
+        user.permissions.addRoles(_.pluck(roles, 'role'), objectId)
       })
-    }).then((roles) => {
-      return _.flatten(roles)
     })
   }
 

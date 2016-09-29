@@ -1,20 +1,31 @@
 
 class PermissionManager {
-  constructor(user, permissionObjs) {
+  constructor(user) {
     this._user = user
-    this._permisionObjs = permissionObjs
+    this._permissionObjs = {}
     
     // construct user permissions list
     this._permissions = new Set()
     this.addRoles(this._user.roles)
   }
 
-  addRoles(roles) {
+  addRoles(roles, objectId) {
+    this._addRoles(roles, this._permissions)
+    if (objectId) {
+      if (!this._permissionObjs[objectId]) {
+        this._permissionObjs[objectId] = new Set()
+      }
+      this._addRoles(roles, this._permissionObjs[objectId])
+    }
+  }
+
+  _addRoles(roles, pSet) {
     for (let role of roles) {
       for (let p of role.permissions) {
-        this._permissions.add(p)
+        pSet.add(p)
       }
     }
+    
   }
 
   // TODO checkObject needs updating here - roles added per-object tracked above?
@@ -22,8 +33,8 @@ class PermissionManager {
     if (!this.has(permissionName)) {
       return false
     }
-    if (obj && this._permissionObjs[permissionName].checkObject) {
-      return this._permissionObjs[permissionName].checkObject(obj, this._user)
+    if (obj && this._permissionObjs[obj.id]) {
+      return this._permissionObjs[obj.id].has(permissionName)
     } else {
       return true
     }
