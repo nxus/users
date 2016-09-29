@@ -24,17 +24,21 @@ class UsersPermissions extends HasModels {
     router.middleware(::this._checkMiddleware)
 
     // Create roles if they do not exist, adding missing perms
-    application.on('startup', () => {
-      return Promise.map(_.keys(this._defaultRoles), (role) => {
-        return this.models.Role.createOrUpdate({role}, {role, systemDefined: true}).then((roleObj) => {
-          this.log.info("Created role", role)
-          roleObj.permissions = _.union(roleObj.permissions || [], this._defaultRoles[role])
-          return roleObj.save()
-        })
+    this.__appListener = ::this._createRoles
+    application.on('startup', this.__appListener)
+    application.on('stop', () => {application.removeListener('startup', this.__appListener)})
+  }
+
+  _createRoles() {
+    return Promise.map(_.keys(this._defaultRoles), (role) => {
+      return this.models.Role.createOrUpdate({role}, {role, systemDefined: true}).then((roleObj) => {
+        this.log.info("Created role", role)
+        roleObj.permissions = _.union(roleObj.permissions || [], this._defaultRoles[role])
+        return roleObj.save()
       })
     })
   }
-
+  
   /*
    * Register a permission
    * @param {string} name Permission name
@@ -64,7 +68,7 @@ class UsersPermissions extends HasModels {
       this._routesPermissions.addRoute(handler, () => {return name})
     } else {
       // Wrap handler
-      return _checkPermission(name, handler)
+      return this._checkPermission(name, handler)
     }
   }
 
@@ -83,15 +87,20 @@ class UsersPermissions extends HasModels {
   }
 
   _checkPermission(name, handler) {
-    return function(req, res, next) {
+    return (req, res, next) => {
+      let promise = Promise.resolve()
       if (handler) {
+        // Route handler, after middleware
         next = () => { handler(req, res) }
+        promise = this._setObjectRoles(req.user, name, req.params)
       }
-      if (req.user.permissions.has(name)) {
-        next()
-      } else {
-        res.status(403).send("Permission Denied")
-      }
+      promise.then(() => {
+        if (req.user.permissions.has(name)) {
+          next()
+        } else {
+          res.status(403).send("Permission Denied")
+        }
+      })
     }
   }
 
