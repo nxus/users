@@ -83,6 +83,10 @@ export default BaseModel.extend({
       type: 'integer', 
       defaultsTo: 0 
     },
+    roles: {
+      collection: 'users-role',
+      via: 'users'
+    },
     team: {
       model: 'users-team'
     },

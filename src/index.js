@@ -87,6 +87,7 @@
 import {HasModels} from 'nxus-storage'
 import {router} from 'nxus-router'
 import {application as app} from 'nxus-core'
+import ObjectRoleModel from './objectRoleModel'
 
 import routesRouter from 'routes'
 
@@ -164,4 +165,5 @@ class Users extends HasModels {
 }
 
 const users = Users.getProxy()
-export {Users as default, users}
+import {permissions} from './modules/users-permissions'
+export {Users as default, users, permissions, ObjectRoleModel}

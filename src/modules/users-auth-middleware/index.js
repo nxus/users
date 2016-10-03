@@ -15,9 +15,14 @@ import {router} from 'nxus-router'
 export default class UsersAuthMiddleware extends HasUserModel {
   constructor() {
     super()
+
+    let getUser = (email) => {
+      return this.models.User.findOne({ email }).populate('roles').populate('team')
+    }
+    
     passport.use(
       new LocalStrategy((username, password, done) => {
-        this.models.User.findOne({ email: username })
+        getUser(username)
           .then((user) => {
             if(!user)                           return done(null, false, { message: 'Incorrect email address.' })
             if(!user.validPassword(password))   return done(null, false, { message: 'Incorrect password.' })
@@ -28,11 +33,13 @@ export default class UsersAuthMiddleware extends HasUserModel {
     )
 
     passport.serializeUser((user, done) => {
-      done(null, user)
+      done(null, user.email)
     })
 
     passport.deserializeUser((user, done) =>{
-      done(null, user)
+      getUser(user).then((u) => {
+        done(null, u)
+      })
     })
 
     router.default().provide('middleware', passport.initialize());
