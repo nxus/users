@@ -43,17 +43,21 @@ describe("Users Permissions", () => {
   })
   describe("Check Middleware", () => {
     let req, res
+    before(() => {
+      module.allow("name", "/ok")
+    })
+    
     beforeEach(() => {
-      module.allow("name", "/ok", (obj, user) => {return "hi"})
       req = {user: {permissions: new Set()}, path: '/ok'}
       res = {status: sinon.stub().returns({send: sinon.spy()})}
-      
     })
     it("should disallow checked path", (done) => {
       module._checkMiddleware(req, res, () => {})
-      res.status.called.should.be.true
-      res.status().send.called.should.be.true
-      done()
+      setTimeout(() => {
+        res.status.called.should.be.true
+        res.status().send.called.should.be.true
+        done()
+      }, 200)
     })
     it("should allow checked path", (done) => {
       req.user.permissions.add("name")
@@ -62,14 +66,6 @@ describe("Users Permissions", () => {
         done()
       })
       res.status.called.should.be.false
-    })
-    it("should add req.checkObject", (done) => {
-      req.user.permissions.add("name")
-      module._checkMiddleware(req, res, () => {
-        req.should.have.property("checkObject")
-        req.checkObject().should.equal("hi")
-        done()
-      })
     })
     it("should allow unchecked path", (done) => {
       req.path = '/other'

@@ -10,7 +10,7 @@ import routes from 'routes'
 import PermissionManager from './PermissionManager'
 
 class UsersPermissions extends HasModels {
-  constructor(opts) {
+  constructor(opts={}) {
     opts.modelNames = {'users-role': 'Role'}
     super(opts)
 
