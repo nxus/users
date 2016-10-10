@@ -17,7 +17,7 @@ export default class UsersAuthMiddleware extends HasUserModel {
     super()
 
     let getUser = (email) => {
-      return this.models.User.findOne({ email }).populate('roles').populate('team')
+      return this.models.User.findOne({ email }).populate('roles')//.populate('team')
     }
     
     passport.use(
