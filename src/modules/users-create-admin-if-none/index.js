@@ -7,6 +7,8 @@
 'use strict';
 
 import {application as app, NxusModule} from 'nxus-core'
+import {permissions} from '../..'
+import Promise from 'bluebird'
 import HasUserModel from '../../HasUserModel'
 
 const defaultUser = {
@@ -29,7 +31,15 @@ export default class CreateAdminIfNone extends HasUserModel {
         defaultUser.password = 'test'
       return User.findOne().where({admin: true}).then((user) => {
         if(!user) {
-          return User.create(defaultUser).then(() => {
+          return Promise.all([
+            User.create(defaultUser),
+            permissions.getRoles()
+          ]).spread((user, roles) => {
+            if (roles['Admin']) {
+              user.roles.add(roles['Admin'])
+              return user.save()
+            }
+          }).then(() => {
             this.log.info('default user created', defaultUser.email, "with password "+defaultUser.password)
           }).catch((e) => {
             this.log.info('could not create user', e)
