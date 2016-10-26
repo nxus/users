@@ -2,6 +2,7 @@ import passport from 'passport'
 
 import {application, NxusModule} from 'nxus-core'
 import {router} from 'nxus-router'
+import {mailer} from 'nxus-mailer'
 import {templater} from 'nxus-templater'
 import {users} from '../../'
 import HasUserModel from '../../HasUserModel'
@@ -37,11 +38,11 @@ export default class UsersLoginRoutes extends HasUserModel {
     var email = req.param('email')
     return this.models.User.findOne({email}).then((user) => {
       if(!user) throw new Error('No user matching that email was found.')
-      var link = "http://"+this.app.config.baseUrl+this.baseUrl+"login-link?token="+user.resetPasswordToken
-      return templater.render('user-forgot-email', {user, email, link, siteName: this.app.config.siteName})
+      var link = "http://"+application.config.baseUrl+this.baseUrl+"login-link?token="+user.resetPasswordToken
+      return templater.render('user-forgot-email', {user, email, link, siteName: application.config.siteName})
     }).then((content) => {
-      let fromEmail = (this.app.config.users && this.app.config.users.forgotPasswordEmail) ? this.app.config.users.forgotPasswordEmail : "noreply@"+((this.app.config.mailer && this.app.config.mailer.emailDomain) || this.app.config.host) 
-      return this.app.get('mailer').send(email, fromEmail, "Password recovery", content, {html: content})
+      let fromEmail = (application.config.users && application.config.users.forgotPasswordEmail) ? application.config.users.forgotPasswordEmail : "noreply@"+((application.config.mailer && application.config.mailer.emailDomain) || application.config.host) 
+      return mailer.send(email, fromEmail, "Password recovery", content, {html: content})
     }).then(() => {
       req.flash('info', 'An email has been sent to the address you provided.');
       res.redirect(this.baseUrl+'login');
