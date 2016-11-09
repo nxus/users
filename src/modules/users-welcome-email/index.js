@@ -18,11 +18,17 @@ export default class UsersWelcomeEmail extends NxusModule {
 
   _sendWelcomeEmail(model, user) {
     this.log.debug('Sending welcome email to', user.email)
-    var link = "http://"+application.config.baseUrl+"/login"
+    var link
+    if (user.password) {
+      link = "http://"+application.config.baseUrl+this.baseUrl+"login"
+    } else {
+      link = "http://"+application.config.baseUrl+this.baseUrl+"login-link?token="+user.resetPasswordToken
+    }
+
     let tempPass = user.tempPassword
     delete user.tempPassword
     templater.render('user-welcome-email', {user, tempPass, link, siteName: application.config.siteName}).then((content) => {
-      let fromEmail = (application.config.users && application.config.users.forgotPasswordEmail) ? application.config.users.forgotPasswordEmail : "noreply@"+((application.config.mailer && application.config.mailer.emailDomain) || application.config.host) 
+      let fromEmail = (application.config.users && application.config.users.forgotPasswordEmail) ? application.config.users.forgotPasswordEmail : "noreply@"+((application.config.mailer && application.config.mailer.emailDomain) || application.config.host)
       return mailer.send(user.email, fromEmail, "Welcome to "+application.config.siteName, content, {html: content})
     })
   }
