@@ -18,6 +18,7 @@ export default class UsersProfile extends HasUserModel {
   }
 
   _profileHandler(req, res) {
+    if(!req.user) return res.redirect(this.baseUrl+'login')
     return templater.render('user-profile', {user: req.user, req}).then(::res.send)
   }
 

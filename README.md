@@ -8,7 +8,7 @@ User management module for Nxus apps.  Users provides a complete framework for m
 
 ### Install
 
-    > npm install @nxus/users --save
+    > npm install nxus-users --save
 
 ### Quickstart
 
@@ -26,7 +26,7 @@ Uses defines a set of common models you can use to build your application, using
 
 Accessing the user model:
 
-    app.get('storage').getModel('user').then((User) => {
+    storage.getModel('users-user').then((User) => {
       ...
     });
 
@@ -57,7 +57,7 @@ Users defines a set of common templates you can use in your app
 
 A login form preconfigured to work with the login/logout routes. Markup supports basic Bootstrap 3 CSS.
 
-    app.get('templater').render('users-login').then((content) => {
+    templater.render('users-login').then((content) => {
       ...
     }
 
@@ -80,5 +80,7 @@ Expects to recieve a GET request with the param `redirect`, which is a url where
 * * *
 
 ## Users
+
+**Extends HasModels**
 
 The Users Module provides a complete user authentication and authorization system.
