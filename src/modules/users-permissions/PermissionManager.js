@@ -30,6 +30,9 @@ class PermissionManager {
 
   // TODO checkObject needs updating here - roles added per-object tracked above?
   allows(permissionName, obj = null) {
+    if (this._user.admin) {
+      return true
+    }
     if (!this.has(permissionName)) {
       return false
     }
