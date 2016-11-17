@@ -20,10 +20,11 @@ export default class RoleAdmin extends AdminController {
   }
 
   defaultContext(req) {
-    return {
-      permissions: _.values(this._permissions),
-      ...super.defaultContext(req)
-    }
+    return super.defaultContext(req).then((ctx) => {
+      ctx.permissions = _.values(this._permissions)
+      return ctx
+    })
+
   }
 
   save(req, res) {
