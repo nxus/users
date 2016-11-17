@@ -47,8 +47,9 @@ export default class UsersLoginRoutes extends HasUserModel {
       req.flash('info', 'An email has been sent to the address you provided.');
       res.redirect(this.baseUrl+'login');
     }).catch((e) => {
-      req.flash('error', e)
-      res.redirect(this.baseUrl+'login');
+      this.log.error('Error sending forgot password email', e)
+      req.flash('error', e.message ? e.message : e)
+      res.redirect(this.baseUrl+'forgot');
     });
   }
 
