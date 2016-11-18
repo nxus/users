@@ -32,7 +32,13 @@ describe("Users Permissions", () => {
       module._userMiddleware({}, {}, done)
     })
     it("should add permissions to user object", (done) => {
-      let req = {user: {roles: [{permissions: ["one", "two"]}]}}
+      let req = {user: {id: 'test'}}
+      let User = {
+        populate: () => { return User },
+        findOne: () => { return User },
+        then: (cb) => { cb({roles: [{permissions: ["one", "two"]}]})}
+      }
+      module.models.User = User
       module._userMiddleware(req, {}, () => {
         req.user.should.have.property("permissions")
         req.user.permissions.has("one").should.be.true
@@ -57,7 +63,7 @@ describe("Users Permissions", () => {
         res.status.called.should.be.true
         res.status().send.called.should.be.true
         done()
-      }, 200)
+      }, 1500)
     })
     it("should allow checked path", (done) => {
       req.user.permissions.add("name")

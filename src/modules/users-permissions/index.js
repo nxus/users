@@ -11,7 +11,7 @@ import PermissionManager from './PermissionManager'
 
 class UsersPermissions extends HasModels {
   constructor(opts={}) {
-    opts.modelNames = {'users-role': 'Role'}
+    opts.modelNames = {'users-role': 'Role', 'users-user': 'User'}
     super(opts)
 
     this._permissions = {}
@@ -120,9 +120,13 @@ class UsersPermissions extends HasModels {
 
   _userMiddleware(req, res, next) {
     if (req.user) {
-      req.user.permissions = new PermissionManager(req.user)
+      this.models.User.findOne(req.user.id).populate('roles').populate('team').then((u) => {
+        req.user.permissions = new PermissionManager(u)
+        next()
+      })
+    } else {
+      next()
     }
-    next()
   }
 
   _setObjectRoles(user, permission, params) {
