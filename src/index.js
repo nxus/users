@@ -147,17 +147,31 @@ class Users extends HasModels {
     return typeof match != 'undefined'
   }
 
+  _redirectToLogin(req, res) {
+    let redirect = app.config.loginRoute || this.getBaseUrl()+'login' + '?redirect='
+    if (req.method == 'GET') {
+      redirect += encodeURIComponent(req.originalUrl)
+    } else {
+      redirect += encodeURIComponent(req.headers.referer)
+    }
+    if(req.xhr) {
+      return res.status(403).send({error: "You must be logged in to continue", redirect})
+    } else {
+      return res.redirect(redirect)
+    }
+  }
+
   _ensureAuthenticated(req, res, next) {
     if (this._checkRoute(req.path, this.protectedRoutes) && !req.isAuthenticated()) {
-      return res.redirect(app.config.loginRoute || this.getBaseUrl()+'login?redirect=' + encodeURIComponent(req.originalUrl))
+      return this._redirectToLogin(req, res)
     }
     return next()
   }
 
   _ensureAdmin(req, res, next) {
     if (this._checkRoute(req.path, this.adminRoutes)) {
-      if (!req.isAuthenticated()) return res.redirect(app.config.loginRoute || this.getBaseUrl()+'login?redirect=' + encodeURIComponent(req.originalUrl))
-      if (!req.user.admin) return res.send(403)
+      if (!req.isAuthenticated()) return this._redirectToLogin(req, res)
+      if (!req.user.admin) return res.status(403).send("Forbidden")
       else return next()
     }
     return next()
