@@ -14,6 +14,11 @@ export default class UserAdmin extends AdminController {
         'admin',
         'lastLogIn'
       ],
+      paginationOptions: {
+        sortField: 'updatedAt',
+        sortDirection: 'DESC',
+        itemsPerPage: 20
+      },
       ...opts
     }
     super(opts)
