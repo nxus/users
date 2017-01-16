@@ -113,6 +113,9 @@ export default BaseModel.extend({
     name: function() {
       return `${this.nameFirst} ${this.nameLast}`
     },
+    displayName: function() {
+      return `${this.name()} (${this.email})`
+    },
     findTeamEditors: function(teamId, cb) {
       this.find({team:teamId, role:Roles.Editor}, cb)
     },
