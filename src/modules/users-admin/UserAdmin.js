@@ -21,6 +21,7 @@ export default class UserAdmin extends AdminController {
         sortDirection: 'DESC',
         itemsPerPage: 20
       },
+      downloadType: 'csv',
       ...opts
     }
     super(opts)
