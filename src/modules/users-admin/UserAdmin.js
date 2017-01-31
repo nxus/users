@@ -12,8 +12,10 @@ export default class UserAdmin extends AdminController {
         'position',
         'enabled',
         'admin',
-        'lastLogIn'
+        'updatedAt',
+        'createdAt',
       ],
+      ignoreFields: ['id'],
       paginationOptions: {
         sortField: 'updatedAt',
         sortDirection: 'DESC',
