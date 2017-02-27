@@ -31,7 +31,7 @@ class UsersPermissions extends HasModels {
 
   _createRoles() {
     return Promise.map(_.keys(this._defaultRoles), async (role) => {
-      let roleOb = await this.models.Role.createOrUpdate({role}, {role, systemDefined: true})
+      let roleObj = await this.models.Role.createOrUpdate({role}, {role, systemDefined: true})
       this.log.info("Created role", role)
       roleObj.permissions = _.union(roleObj.permissions || [], this._defaultRoles[role])
       return roleObj.save()
