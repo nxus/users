@@ -111,20 +111,18 @@ class UsersPermissions extends HasModels {
   }
 
   _checkPermission(name, handler, objectParam) {
-    return (req, res, next) => {
-      let promise = Promise.resolve()
+    return async (req, res, next) => {
       if (handler) {
         // Route handler, after middleware
         next = () => { handler(req, res) }
-        promise = this._setObjectRoles(req.user, name, req.params[objectParam])
+        await this._setObjectRoles(req.user, name, req.params[objectParam])
       }
-      promise.then(() => {
-        if (req.user.permissions.has(name)) {
-          next()
-        } else {
-          res.status(403).send("Permission Denied")
-        }
-      })
+      if (req.user.permissions.has(name)) {
+        next()
+      } else {
+        this.log.info("Denied access for", req.path, name, req.user ? req.user.email : "no one")
+        res.status(403).send("Permission Denied")
+      }
     }
   }
 
@@ -133,9 +131,9 @@ class UsersPermissions extends HasModels {
     // TODO this probably needs to support nested/multiple matches
     if (req.user && routePermission) {
       let [permission, objectParam] = routePermission.fn()
-      this.log.info("Checking route permission for ", req.path, permission, routePermission.params)
+      this.log.info("Checking route permission for ", req.path, permission, objectParam, "in", routePermission.params)
       await this._setObjectRoles(req.user, permission, routePermission.params[objectParam])
-      this._checkPermission(permission, objectParam)(req, res, next)
+      this._checkPermission(permission, null, objectParam)(req, res, next)
     } else {
       next()
     }
