@@ -30,12 +30,11 @@ class UsersPermissions extends HasModels {
   }
 
   _createRoles() {
-    return Promise.map(_.keys(this._defaultRoles), (role) => {
-      return this.models.Role.createOrUpdate({role}, {role, systemDefined: true}).then((roleObj) => {
-        this.log.info("Created role", role)
-        roleObj.permissions = _.union(roleObj.permissions || [], this._defaultRoles[role])
-        return roleObj.save()
-      })
+    return Promise.map(_.keys(this._defaultRoles), async (role) => {
+      let roleOb = await this.models.Role.createOrUpdate({role}, {role, systemDefined: true})
+      this.log.info("Created role", role)
+      roleObj.permissions = _.union(roleObj.permissions || [], this._defaultRoles[role])
+      return roleObj.save()
     })
   }
 
@@ -100,14 +99,13 @@ class UsersPermissions extends HasModels {
     return this._permissions
   }
 
-  getRoles() {
-    return this.models.Role.find().then((roles) => {
-      let ret = {}
-      for (let role of roles) {
-        ret[role.role] = role
-      }
-      return ret
-    })
+  async getRoles() {
+    let roles = await this.models.Role.find()
+    let ret = {}
+    for (let role of roles) {
+      ret[role.role] = role
+    }
+    return ret
   }
 
   _checkPermission(name, handler, objectParam) {
@@ -128,26 +126,24 @@ class UsersPermissions extends HasModels {
     }
   }
 
-  _checkMiddleware(req, res, next) {
+  async _checkMiddleware(req, res, next) {
     let routePermission = this._routesPermissions.match(req.path)
     // TODO this probably needs to support nested/multiple matches
     if (req.user && routePermission) {
       let [permission, objectParam] = routePermission.fn()
       this.log.info("Checking route permission for ", req.path, permission, routePermission.params)
-      this._setObjectRoles(req.user, permission, routePermission.params[objectParam]).then(() => {
-        this._checkPermission(permission, objectParam)(req, res, next)
-      })
+      await this._setObjectRoles(req.user, permission, routePermission.params[objectParam])
+      this._checkPermission(permission, objectParam)(req, res, next)
     } else {
       next()
     }
   }
 
-  _userMiddleware(req, res, next) {
+  async _userMiddleware(req, res, next) {
     if (req.user) {
-      this.models.User.findOne(req.user.id).populate('roles').populate('team').then((u) => {
-        req.user.permissions = new PermissionManager(u)
-        next()
-      })
+      let u = await this.models.User.findOne(req.user.id).populate('roles').populate('team')
+      req.user.permissions = new PermissionManager(u)
+      next()
     } else {
       next()
     }
