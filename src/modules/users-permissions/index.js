@@ -38,38 +38,62 @@ class UsersPermissions extends HasModels {
       })
     })
   }
-  
+
+
   /*
    * Register a permission
    * @param {string} name Permission name
-   * @param {function|string} [handler|route] A handler or route to wrap with a permission check
-   * @param {object} [objectParams] Mapping of req params to ObjectRoleModel identity
-   * @param {string|array} [roleName] Default role name(s) to contain this permission
+   * @param {string|array} [defaultRoles] Default role name(s) to contain this permission
+   * @param {object} [objectModel] Collection of ObjectRoleModel for object permissions
    */
-  allow(name, handler = null, objectParams = null, roleName = null) {
+  register(name, defaultRoles=null, objectModel=null) {
     this._permissions[name] = {
       name,
-      handler,
-      objectParams,
+      objectModel,
     }
-    if(roleName) {
-      if (!_.isArray(roleName)) {
-        roleName = [roleName]
+    if(defaultRoles) {
+      if (!_.isArray(defaultRoles)) {
+        defaultRoles = [defaultRoles]
       }
-      for (let role of roleName) {
+      for (let role of defaultRoles) {
         if (!this._defaultRoles[role]) {
           this._defaultRoles[role] = []
         }
         this._defaultRoles[role].push(name)
       }
     }
+  }
+  
+  /*
+   * Guard a handler method or route a permission
+   * @param {function|string} [handler|route] A handler or route to wrap with a permission check
+   * @param {string} name Permission name
+   * @param {object} [objectParam] URL param for object permissions object key
+   */
+  guard(handler, name, objectParam=null) {
     if (_.isString(handler)) {
       // Route
-      this._routesPermissions.addRoute(handler, () => {return name})
+      this._routesPermissions.addRoute(handler, () => {return [name, objectParam]})
     } else {
       // Wrap handler
-      return this._checkPermission(name, handler)
+      return this._checkPermission(name, handler, objectParam)
     }
+  }
+  /*
+   * Register a permission and guard a route handler in one
+   * @param {string} name Permission name
+   * @param {function|string} [handler|route] A handler or route to wrap with a permission check
+   * @param {object} [objectParams] Mapping of req params to ObjectRoleModel identity
+   * @param {string|array} [roleName] Default role name(s) to contain this permission
+   */
+  allow(name, handler = null, objectParams = null, roleName = null) {
+    let coll, param
+    if (objectParams) {
+      coll = _.first(_.keys(objectParams))
+      param = objectParams[coll]
+    }
+    this.register(name, roleName, coll)
+    return this.guard(handler, name, param)
   }
 
   getPermissions() {
@@ -86,13 +110,13 @@ class UsersPermissions extends HasModels {
     })
   }
 
-  _checkPermission(name, handler) {
+  _checkPermission(name, handler, objectParam) {
     return (req, res, next) => {
       let promise = Promise.resolve()
       if (handler) {
         // Route handler, after middleware
         next = () => { handler(req, res) }
-        promise = this._setObjectRoles(req.user, name, req.params)
+        promise = this._setObjectRoles(req.user, name, req.params[objectParam])
       }
       promise.then(() => {
         if (req.user.permissions.has(name)) {
@@ -108,10 +132,10 @@ class UsersPermissions extends HasModels {
     let routePermission = this._routesPermissions.match(req.path)
     // TODO this probably needs to support nested/multiple matches
     if (req.user && routePermission) {
-      let permission = routePermission.fn()
+      let [permission, objectParam] = routePermission.fn()
       this.log.info("Checking route permission for ", req.path, permission, routePermission.params)
-      this._setObjectRoles(req.user, permission, routePermission.params).then(() => {
-        this._checkPermission(permission)(req, res, next)
+      this._setObjectRoles(req.user, permission, routePermission.params[objectParam]).then(() => {
+        this._checkPermission(permission, objectParam)(req, res, next)
       })
     } else {
       next()
@@ -129,16 +153,13 @@ class UsersPermissions extends HasModels {
     }
   }
 
-  _setObjectRoles(user, permission, params) {
-    let objectParams = this._permissions[permission].objectParams
-    return Promise.map(_.keys(objectParams), (param) => {
-      let objectId = params[param]
-      return storage.getModel(objectParams[param]).then((model) => {
-        return model.find({user: user.id, object: objectId}).populate('role')
-      }).then((roles) => {
-        user.permissions.addRoles(_.pluck(roles, 'role'), objectId)
-      })
-    })
+  async _setObjectRoles(user, permission, objectId) {
+    let objectModel = this._permissions[permission].objectModel
+    if (!objectModel) return
+    
+    let model = await storage.getModel(objectModel)
+    let roles = await model.find({user: user.id, object: objectId}).populate('role')
+    user.permissions.addRoles(_.pluck(roles, 'role'), objectId)
   }
 
 }
