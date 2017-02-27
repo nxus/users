@@ -97,4 +97,17 @@ describe("Users Permissions", () => {
       module._defaultRoles.should.have.property("Two")
     })
   })
+  describe("Guard", () => {
+    it("should guard route", () => {
+      module.guard("/route", 'test-register')
+      let match = module._routesPermissions.match("/route")
+      match.should.have.property("route", "/route")
+      let x = match.fn()
+      x.should.have.property("length", 2)
+    })
+    it("should guard handler", () => {
+      let x = module.guard(() => {}, 'test-register')
+      x.should.be.a("function")
+    })
+  })
 });
