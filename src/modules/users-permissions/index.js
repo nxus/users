@@ -46,6 +46,7 @@ class UsersPermissions extends HasModels {
    * @param {object} [objectModel] Collection of ObjectRoleModel for object permissions, or function (objectId, user) to return the roles a user has for a given object
    */
   register(name, defaultRoles=null, objectModel=null) {
+    this.log.info("Registering permission", name, "for", defaultRoles, objectModel)
     this._permissions[name] = {
       name,
       objectModel,
@@ -90,8 +91,8 @@ class UsersPermissions extends HasModels {
   allow(name, handler = null, objectParams = null, roleName = null) {
     let coll, param
     if (objectParams) {
-      coll = _.first(_.keys(objectParams))
-      param = objectParams[coll]
+      param = _.first(_.keys(objectParams))
+      coll = objectParams[param]
     }
     this.register(name, roleName, coll)
     return this.guard(handler, name, param)
