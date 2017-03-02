@@ -9,6 +9,60 @@ import routes from 'routes'
 
 import PermissionManager from './PermissionManager'
 
+/**
+ * Permissions system
+ * 
+ * This module provides a role & permission list approach to managing user access in Nxus.
+ * Routes (or other guarded functionality) is associated with a Permission name, and permissions
+ * are assigned to Roles. A User may have multiple roles, and a permission may belong to multiple roles.
+ * 
+ * Permissions and roles can also be scoped to specific model objects, allowing users access to just those objects
+ * they own or have been given a role in managing. 
+ * 
+ * ## Usage
+ * `import {permissions} from 'nxus-users'
+ * 
+ * ### Registering permissions and roles
+ * 
+ * `permissions.register('permission-name', ['Default Role'])
+ * 
+ * ### Guarding routes and handlers
+ * 
+ * `permissions.guard('/my/route', 'permission-name')
+ * 
+ * `router.route('/my/route', permissions.guardHandler(::this._myRoute, 'permission-name'))
+ * 
+ * ### Checking for user permissions in handlers/templates
+ * 
+ * `req.user.permissions.allows('permission-name')
+ * `req.user.permissions.allows('permission-name', object)
+ * 
+ * ### Object-level permissions
+ * 
+ * Object role assignments need a collection object that subclasses ObjectRoleModel and overrides the `object` attribute:
+ * 
+ * ```
+  import {ObjectRoleModel} from 'nxus-users'
+  export default ObjectRoleModel.extend{{
+    identity: 'my-object-roles',
+    attributes: { object: { model: 'my-object'}}
+  }}
+ * ````
+ * 
+ * The permissions should be registered with an extra argument naming this model collection:
+ * 
+ * `permissions.register('my-object-permission', ['Object Editor'], 'my-object-roles')
+ * 
+ * Alternatively, this may be a function that accepts `(objectId, user)` and returns the roles assigned -
+ * This can implement traversing the object model to reach a parent with the permissions, or entirely override
+ * how and where role assignments are stored.
+ * 
+ * Guards should be set with the extra argument naming the URL param to use as objectId to lookup.
+ * 
+ * `permissions.guard('/edit/:id', 'my-object-permission', 'id')
+ * 
+ */
+
 class UsersPermissions extends HasModels {
   constructor(opts={}) {
     opts.modelNames = {'users-role': 'Role', 'users-user': 'User'}
@@ -65,23 +119,28 @@ class UsersPermissions extends HasModels {
   }
   
   /*
-   * Guard a handler method or route a permission
+   * Guard a route with a permission
    * @param {function|string} [handler|route] A handler or route to wrap with a permission check
    * @param {string} name Permission name
    * @param {object} [objectParam] URL param for object permissions object key
    * @returns {function} Wrapped handler for method handlers
    */
-  guard(handler, name, objectParam=null) {
-    if (_.isString(handler)) {
-      // Route
-      this._routesPermissions.addRoute(handler, () => {return [name, objectParam]})
-    } else {
-      // Wrap handler
-      return this._checkPermission(name, handler, objectParam)
-    }
+  guard(route, name, objectParam=null) {
+    this._routesPermissions.addRoute(route, () => {return [name, objectParam]})
   }
   /*
-   * Register a permission and guard a route handler in one
+   * Guard a handler method with a permission
+   * @param {function|string} [handler|route] A handler or route to wrap with a permission check
+   * @param {string} name Permission name
+   * @param {object} [objectParam] URL param for object permissions object key
+   * @returns {function} Wrapped handler for method handlers
+   */
+  guardHandler(handler, name, objectParam=null) {
+    // Wrap handler
+      return this._checkPermission(name, handler, objectParam)
+  }
+  /*
+   * [Deprecated] Register a permission and guard a route handler in one
    * @param {string} name Permission name
    * @param {function|string} [handler|route] A handler or route to wrap with a permission check
    * @param {object} [objectParams] Mapping of req params to ObjectRoleModel identity
@@ -91,11 +150,19 @@ class UsersPermissions extends HasModels {
   allow(name, handler = null, objectParams = null, roleName = null) {
     let coll, param
     if (objectParams) {
-      param = _.first(_.keys(objectParams))
+      let keys = _.keys(objectParams)
+      if (keys.length > 1) {
+        throw new Error("permissions.allow does not support multiple objectParams values: "+ keys)
+      }
+      param = _.first(keys)
       coll = objectParams[param]
     }
     this.register(name, roleName, coll)
-    return this.guard(handler, name, param)
+    if (_.isString(handler)) {
+      return this.guard(handler, name, param)
+    } else {
+      return this.guardHandler(handler, name, param)
+    }
   }
 
   getPermissions() {

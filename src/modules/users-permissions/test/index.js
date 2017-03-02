@@ -106,7 +106,7 @@ describe("Users Permissions", () => {
       x.should.have.property("length", 2)
     })
     it("should guard handler", () => {
-      let x = module.guard(() => {}, 'test-register')
+      let x = module.guardHandler(() => {}, 'test-register')
       x.should.be.a("function")
     })
   })
