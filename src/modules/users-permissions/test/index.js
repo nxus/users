@@ -82,4 +82,32 @@ describe("Users Permissions", () => {
       res.status.called.should.be.false
     })
   })
+  describe("Register", () => {
+    it("should register name", () => {
+      module.register("test-register")
+      module._permissions.should.have.property("test-register")
+    })
+    it("should register objectModel", () => {
+      module.register("test-register", null, 'one')
+      module._permissions['test-register'].should.have.property('objectModel', 'one')
+    })
+    it("should register roles", () => {
+      module.register("test-register", ["One", "Two"])
+      module._defaultRoles.should.have.property("One")
+      module._defaultRoles.should.have.property("Two")
+    })
+  })
+  describe("Guard", () => {
+    it("should guard route", () => {
+      module.guard("/route", 'test-register')
+      let match = module._routesPermissions.match("/route")
+      match.should.have.property("route", "/route")
+      let x = match.fn()
+      x.should.have.property("length", 2)
+    })
+    it("should guard handler", () => {
+      let x = module.guardHandler(() => {}, 'test-register')
+      x.should.be.a("function")
+    })
+  })
 });
