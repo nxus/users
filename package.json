@@ -1,6 +1,6 @@
 {
   "name": "nxus-users",
-  "version": "4.0.0-14",
+  "version": "4.0.0-15",
   "description": "User management module for Nxus apps.",
   "main": "lib",
   "scripts": {
