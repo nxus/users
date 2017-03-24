@@ -30,7 +30,7 @@ import PermissionManager from './PermissionManager'
  * 
  * `permissions.guard('/my/route', 'permission-name')
  * 
- * `router.route('/my/route', permissions.guardHandler(::this._myRoute, 'permission-name'))
+ * `permissions.guardHandler(::this._myRoute, 'permission-name').then((handler) => { router.route('/my/route', handler) })
  * 
  * ### Checking for user permissions in handlers/templates
  * 
