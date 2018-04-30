@@ -1,6 +1,6 @@
 {
   "name": "nxus-users",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "User management module for Nxus apps.",
   "main": "lib",
   "scripts": {
@@ -54,6 +54,7 @@
     "nxus-router": "^4.0.0",
     "nxus-storage": "^4.0.0",
     "nxus-templater": "^4.0.0",
+    "nxus-web": "^4.1.3",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
     "routes": "^2.1.0",
