@@ -1,6 +1,7 @@
 import {AdminController} from 'nxus-admin'
+import {DataTablesMixin} from 'nxus-web'
 
-export default class UserAdmin extends AdminController {
+export default class UserAdmin extends DataTablesMixin(AdminController) {
   constructor(opts) {
     opts = {
       model: 'users-user',

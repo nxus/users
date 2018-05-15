@@ -1,8 +1,9 @@
 import {AdminController} from 'nxus-admin'
+import {DataTablesMixin} from 'nxus-web'
 import {permissions} from '../../'
 import _ from 'underscore'
 
-export default class RoleAdmin extends AdminController {
+export default class RoleAdmin extends DataTablesMixin(AdminController) {
   constructor(opts) {
     opts = {
       model: 'users-role',

@@ -9,11 +9,11 @@ class UsersAdmin extends NxusModule {
   constructor(opts) {
     super(opts)
 
-    new UserAdmin()
+    new UserAdmin({useDataTablesAjax: this.config.useDataTablesAjax})
     templater.template(__dirname+'/templates/admin-user-form.ejs', 'admin-page', 'users-user-admin-create')
     templater.template(__dirname+'/templates/admin-user-form.ejs', 'admin-page', 'users-user-admin-edit')
 
-    new RoleAdmin()
+    new RoleAdmin({useDataTablesAjax: this.config.useDataTablesAjax})
     templater.template(__dirname+'/templates/admin-role-form.ejs', 'admin-page', 'users-role-admin-create')
     templater.template(__dirname+'/templates/admin-role-form.ejs', 'admin-page', 'users-role-admin-edit')
       
@@ -26,6 +26,10 @@ class UsersAdmin extends NxusModule {
       ]
     })
 
+  }
+
+  _defaultConfig() {
+    return {useDataTablesAjax: false}
   }
 }
 
