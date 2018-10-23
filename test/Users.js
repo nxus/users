@@ -88,4 +88,24 @@ describe("Users", () => {
       next.calledOnce.should.be.true
     })
   })
+  describe("adminRoute", () => {
+    beforeEach(() => {
+      module = new Users()
+    })
+    it("middleware matches, anon redirects", () => {
+      let res = stubRes()
+      module.ensureAdmin('/admin')
+      module._ensureAdmin(Object.assign({path: '/admin'}, anonReq), res)
+      //console.log(res.redirect.firstCall.args)
+      res.redirect.calledWith('/test/login?redirect=%2F').should.be.true
+    })
+    it("middleware matches, non-admin errors", () => {
+      let res = stubRes()
+      module.ensureAdmin('/admin')
+      module._ensureAdmin(Object.assign({path: '/admin', user: {admin: false}}, authReq), res)
+      //console.log(res.redirect.firstCall.args)
+      res.redirect.notCalled.should.be.true
+      res.status.calledWith(403).should.be.true
+    })
+  })
 });

@@ -98,8 +98,8 @@ import routesRouter from 'routes'
 class Users extends HasModels {
   constructor() {
     super()
-    this.protectedRoutes = new Set()
-    this.adminRoutes = new Set()
+    this.protectedRoutes = new routesRouter()
+    this.adminRoutes = new routesRouter()
 
 //    app.get('metrics').capture('user')
     
@@ -129,22 +129,11 @@ class Users extends HasModels {
   }
 
   protectedRoute(route) {
-    this.protectedRoutes.add(route)
+    this.protectedRoutes.addRoute(route, () => {})
   }
 
   ensureAdmin(route) {
-    this.adminRoutes.add(route)
-  }
-
-  _checkRoute(route, routes) {
-    let r = new routesRouter()
-    r.routes = [];
-    r.routeMap = [];
-    routes.forEach((x) => {
-      r.addRoute(x, () => {})
-    })
-    var match = r.match(route);
-    return typeof match != 'undefined'
+    this.adminRoutes.addRoute(route, () => {})
   }
 
   _redirectToLogin(req, res) {
@@ -162,14 +151,14 @@ class Users extends HasModels {
   }
 
   _ensureAuthenticated(req, res, next) {
-    if (this._checkRoute(req.path, this.protectedRoutes) && !req.isAuthenticated()) {
+    if (this.protectedRoutes.match(req.path) && !req.isAuthenticated()) {
       return this._redirectToLogin(req, res)
     }
     return next()
   }
 
   _ensureAdmin(req, res, next) {
-    if (this._checkRoute(req.path, this.adminRoutes)) {
+    if (this.adminRoutes.match(req.path)) {
       if (!req.isAuthenticated()) return this._redirectToLogin(req, res)
       if (!req.user.admin) return res.status(403).send("Forbidden")
       else return next()
