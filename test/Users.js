@@ -62,6 +62,20 @@ describe("Users", () => {
       //console.log(res.redirect.firstCall.args)
       res.redirect.calledWith('/test/login?redirect=%2F').should.be.true
     })
+    it("middleware matches neverRedirect, anon gives 403", () => {
+      let res = stubRes()
+      module.protectedRoute('/authed', true)
+      module._ensureAuthenticated(Object.assign({path: '/authed'}, anonReq), res)
+      res.redirect.notCalled.should.be.true
+      res.status.calledWith(403).should.be.true
+    })
+    it("protectedServiceRoute is a synonym for neverRedirect option", () => {
+      let res = stubRes()
+      module.protectedServiceRoute('/authed')
+      module._ensureAuthenticated(Object.assign({path: '/authed'}, anonReq), res)
+      res.redirect.notCalled.should.be.true
+      res.status.calledWith(403).should.be.true
+    })
     it("middleware matches, anon xhr gives 403", () => {
       let res = stubRes()
       module.protectedRoute('/authed')

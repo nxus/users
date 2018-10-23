@@ -100,6 +100,7 @@ class Users extends HasModels {
     super()
     this.protectedRoutes = new routesRouter()
     this.adminRoutes = new routesRouter()
+    this.serviceRoutes = new routesRouter()
 
 //    app.get('metrics').capture('user')
     
@@ -128,8 +129,31 @@ class Users extends HasModels {
     return baseUrl
   }
 
-  protectedRoute(route) {
+  /**
+   * Requires a user to be logged in to access this route.
+   * Failure redirects the user to the login page, or
+   * if serviceRoute or XHR request, a 403 with {error, redirect} JSON body
+   * 
+   * @param {string} route
+   * @param {boolean} serviceRoute
+   */
+  
+  protectedRoute(route, serviceRoute=false) {
     this.protectedRoutes.addRoute(route, () => {})
+    if (serviceRoute) {
+      this.serviceRoutes.addRoute(route, () => {})
+    }
+  }
+
+  /**
+   * Requires a user to be logged in to access this route.
+   * Failure sends a requests a 403 with {error, redirect} JSON body
+   * 
+   * @param {string} route
+   */
+
+  protectedServiceRoute(route) {
+    this.protectedRoute(route, true)
   }
 
   ensureAdmin(route) {
@@ -143,7 +167,7 @@ class Users extends HasModels {
     } else {
       redirect += encodeURIComponent(req.headers.referer)
     }
-    if(req.xhr) {
+    if(req.xhr || this.serviceRoutes.match(req.path)) {
       return res.status(403).send({error: "You must be logged in to continue", redirect})
     } else {
       return res.redirect(redirect)
