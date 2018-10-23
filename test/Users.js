@@ -3,6 +3,7 @@
 import Users from '../src/index'
 
 import {application as app} from 'nxus-core'
+import sinon from 'sinon'
 
 describe("Users", () => {
   var module;
@@ -34,6 +35,57 @@ describe("Users", () => {
       app.config['users'] = {baseUrl: 'test'}
       module = new Users();
       module.getBaseUrl().should.equal('/test/')
+    })
+  })
+
+  let headers = {referer: '/'}
+  let anonReq = {headers, isAuthenticated: () => {return false}}
+  let anonReqXHR = {headers, isAuthenticated: () => {return false}, xhr: true}
+  let authReq = {headers, isAuthenticated: () => {return true}}
+  let stubRes = () => {
+    let r = {
+      send: sinon.stub().returnsThis(),
+      status: sinon.stub().returnsThis(),
+      redirect: sinon.stub().returnsThis()
+    }
+    return r
+  }
+
+  describe("protectedRoute", () => {
+    beforeEach(() => {
+      module = new Users()
+    })
+    it("middleware matches, anon redirects", () => {
+      let res = stubRes()
+      module.protectedRoute('/authed')
+      module._ensureAuthenticated(Object.assign({path: '/authed'}, anonReq), res)
+      //console.log(res.redirect.firstCall.args)
+      res.redirect.calledWith('/test/login?redirect=%2F').should.be.true
+    })
+    it("middleware matches, anon xhr gives 403", () => {
+      let res = stubRes()
+      module.protectedRoute('/authed')
+      module._ensureAuthenticated(Object.assign({path: '/authed'}, anonReqXHR), res)
+      res.redirect.notCalled.should.be.true
+      res.status.calledWith(403).should.be.true
+    })
+    it("middleware no matches, anon continues", () => {
+      let res = stubRes()
+      let next = sinon.spy()
+      module.protectedRoute('/authed')
+      module._ensureAuthenticated(Object.assign({path: '/'}, anonReq), res, next)
+      res.redirect.notCalled.should.be.true
+      res.status.notCalled.should.be.true
+      next.calledOnce.should.be.true
+    })
+    it("middleware matches, auth continues", () => {
+      let res = stubRes()
+      let next = sinon.spy()
+      module.protectedRoute('/authed')
+      module._ensureAuthenticated(Object.assign({path: '/authed'}, authReq), res, next)
+      res.redirect.notCalled.should.be.true
+      res.status.notCalled.should.be.true
+      next.calledOnce.should.be.true
     })
   })
 });
