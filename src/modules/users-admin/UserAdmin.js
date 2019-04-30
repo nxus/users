@@ -13,6 +13,15 @@ export default class UserAdmin extends DataTablesMixin(AdminController) {
         'position',
         'enabled',
         'admin',
+        'roles'
+      ],
+      listFields: [
+        'email',
+        'nameFirst',
+        'nameLast',
+        'position',
+        'enabled',
+        'admin',
         'updatedAt',
         'createdAt',
       ],
@@ -26,6 +35,17 @@ export default class UserAdmin extends DataTablesMixin(AdminController) {
       ...opts
     }
     super(opts)
+  }
+
+  edit(req, res, query) {
+    // No clue why populate = ['roles'] is returning the intersection rather than the role objects,
+    // manually fix here
+    return super.edit(req, res, query).then((context) => {
+      return this.model.findOne({id: context.object.id}).populate('roles').then((x) => {
+        context.object.roles = x.roles
+        return context
+      })
+    })
   }
 
   save(req, res) {

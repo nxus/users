@@ -164,6 +164,16 @@ class UsersPermissions extends HasModels {
       return this.guardHandler(handler, name, param)
     }
   }
+  /*
+   * Get users with a given (non-object) permission
+   * @param {string} name Permission name
+   * @returns {Array} user objects with this permission
+   */
+  async getUsersWithPermission(name) {
+    let roles = await this.models.Role.find({permissions: name}).populate('users')
+    return _.flatten(_.pluck(roles, 'users'))
+  }
+  
 
   getPermissions() {
     return this._permissions
