@@ -1,53 +1,23 @@
-
-                <form role="form" action="" method="POST" class="form-horizontal form-bordered">
-                    <input type="hidden" id="id" name="id" value="<%= object.id %>" />
-                    <div class="form-body">
-                        <div class="form-group">
-                            <label class="col-sm-3 to-right" for="borderedEmail">Email</label>
-                            <div class="col-sm-7">
-                                <input type="email" id="borderedEmail" class="form-control" value="<%= object.email %>" placeholder="Enter email" name="email" required>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 to-right" for="borderedPassword">Password</label>
-                            <div class="col-sm-7">
-                                <input type="password" id="borderedPassword" class="form-control" placeholder="Enter password" name="password">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 to-right" for="name">First Name</label>
-                            <div class="col-sm-7">
-                                <input type="text" id="name" class="form-control" value="<%= object.nameFirst %>" placeholder="Enter your first name" name="nameFirst" >
-                            </div>
-                        </div>
-                         <div class="form-group">
-                            <label class="col-sm-3 to-right" for="name">Last Name</label>
-                            <div class="col-sm-7">
-                                <input type="text" id="name" class="form-control" value="<%= object.nameLast %>" placeholder="Enter your last name" name="nameLast" >
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 to-right" for="phone">Phone</label>
-                            <div class="col-sm-7">
-                                <input type="text" id="phone" class="form-control" value="<%= object.phone %>" placeholder="Enter phone number" name="phone" >
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 to-right" for="enabled">Enabled?</label>
-                            <div class="col-sm-7">
-                                <input type="checkbox" id="enabled" value="true"  <%= (object.enabled) ? 'checked="checked"' : '' %> name="enabled">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 to-right" for="admin">Admin?</label>
-                            <div class="col-sm-7">
-                                <input type="checkbox" id="admin" value="true"  <%= (object.admin) ? 'checked="checked"' : '' %> name="admin">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-offset-3 col-sm-7">
-                                <button class="btn btn-theme" type="submit">Save Account</button>        
-                            </div>
-                        </div>
-                    </div>
-                </form>
+<form role="form" action="" method="POST" class="form-horizontal form-bordered">
+  <input type="hidden" id="id" name="<%= idField %>" value="<%= object[idField] %>" />
+  <div class="form-body">
+    <% editFields.forEach(field => {
+        let attr = attributes.find(attr => (attr.name === field) )
+        attr.value = object[attr.name] %>
+      <%- render("web-form-input-"+attr.type, attr) %>
+    <% }) %>
+    <% if (object.resetPasswordToken) { %>
+      <div class="form-group">
+          <label class="col-sm-3 to-right">Login link</label>
+          <div class="col-sm-7">
+            <%- `${req.protocol}://${req.hostname}/login-link?token=${object.resetPasswordToken}` %>
+          </div>
+      </div>
+    <% } %>
+  </div>
+  <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-7">
+          <button class="btn btn-primary btn-theme" type="submit">Save</button>
+      </div>
+  </div>
+</form>
