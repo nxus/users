@@ -9,6 +9,7 @@
     "test": "NODE_ENV=test mocha --compilers js:babel-register -R spec test/*.js src/modules/**/test/*.js",
     "compile": "rm -rf lib/; babel src --out-dir lib; npm run copyTemplates",
     "copyTemplates": "for each in `ls src/modules/`; do if [ -d src/modules/$each/templates ]; then cp -r src/modules/$each/templates lib/modules/$each; fi; done;",
+    "prepare": "npm run compile",
     "prepublish": "npm run compile",
     "build-docs": "export NAME=`npm view . name`; export VERSION=`npm view . version`; documentation readme ./src/*.js --name $NAME --project-version $VERSION --readme-file ./README.md -s $NAME",
     "publish-docs": "npm run build-docs && git add ./README.md && git commit -m 'Updated README API Docs' && git push"
